@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stacy Kessler — Art Advisory · Entertainment · Influence</title>
+<meta name="description" content="Stacy Kessler — Art Advisor, Actress, Entrepreneur, UGC Creator. Operating across four worlds from New York to Zurich.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Outfit:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   STACY KESSLER — PERMANENT PRODUCTION SITE v3
+   All Four Wow Animations: Gold Reveal + Constellation +
+   Cinematic Scroll + Vertical Curtain
+   ============================================================ */
+:root {
+  --gold:       #C9A96E;
+  --gold-light: #E8D5A3;
+  --gold-dim:   #8A6D3E;
+  --gold-pale:  rgba(201,169,110,0.12);
+  --ink:        #0A0806;
+  --ink-warm:   #141210;
+  --surface:    #161310;
+  --surface-2:  #1E1B17;
+  --ivory:      #F4EFE6;
+  --ivory-dim:  #C5BDB0;
+  --muted:      #6E6660;
+  --serif:      'Cormorant Garamond', Georgia, serif;
+  --sans:       'Outfit', system-ui, sans-serif;
+  --ease:       cubic-bezier(0.25,0.46,0.45,0.94);
+  --ease-back:  cubic-bezier(0.34,1.56,0.64,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{background:var(--ink);color:var(--ivory);font-family:var(--sans);font-weight:300;line-height:1.6;overflow-x:hidden}
+h1,h2,h3,h4{font-family:var(--serif);font-weight:300;line-height:1.05}
+a{color:inherit;text-decoration:none}
+.eyebrow{font-family:var(--sans);font-size:.65rem;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:var(--gold)}
+.gold{color:var(--gold)}
+.serif{font-family:var(--serif)}
+
+/* ---- Grain ---- */
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.5}
+
+/* ---- Cursor glow ---- */
+#cg{position:fixed;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(201,169,110,.04) 0%,transparent 70%);pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:opacity .4s;will-change:transform}
+
+/* ============================================================
+   GOLD INTRO OVERLAY
+   ============================================================ */
+#goldIntro{
+  position:fixed;inset:0;z-index:10000;
+  background:#0A0806;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+#goldCanvas{position:absolute;inset:0;width:100%;height:100%}
+.intro-name{
+  position:relative;z-index:2;
+  font-family:var(--serif);
+  font-size:clamp(3rem,9vw,9rem);
+  font-weight:300;
+  letter-spacing:.08em;
+  color:transparent;
+  -webkit-text-stroke:1px rgba(201,169,110,0);
+  text-transform:uppercase;
+  text-align:center;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .8s var(--ease),-webkit-text-stroke-color 1.2s var(--ease);
+}
+.intro-name.show{opacity:1;-webkit-text-stroke-color:rgba(201,169,110,.6)}
+.intro-name span{display:block;font-style:italic;font-size:.55em;letter-spacing:.2em;color:rgba(201,169,110,.4);-webkit-text-stroke:0}
+.intro-skip{
+  position:absolute;bottom:2.5rem;right:2.5rem;z-index:3;
+  font-size:.6rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(201,169,110,.4);cursor:pointer;
+  transition:color .3s;border:none;background:none;
+}
+.intro-skip:hover{color:var(--gold)}
+
+/* ============================================================ NAV ============================================================ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:500;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.8rem 4rem;
+  transition:padding .5s var(--ease),background .5s,backdrop-filter .5s;
+}
+nav.scrolled{padding:1rem 4rem;background:rgba(10,8,6,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--gold-pale)}
+.nav-logo{font-family:var(--serif);font-size:1.05rem;font-weight:400;letter-spacing:.14em;text-transform:uppercase}
+.nav-logo em{font-style:normal;color:var(--gold)}
+.nav-links{display:flex;gap:2.5rem;list-style:none}
+.nav-links a{font-size:.68rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--ivory-dim);transition:color .3s}
+.nav-links a:hover{color:var(--gold)}
+@media(max-width:768px){nav{padding:1.2rem 1.5rem}.nav-links{display:none}nav.scrolled{padding:.8rem 1.5rem}}
+
+/* ============================================================ HERO ============================================================ */
+.hero{
+  min-height:100vh;display:grid;grid-template-columns:1fr 1fr;
+  position:relative;overflow:hidden;
+}
+.hero-left{
+  display:flex;flex-direction:column;justify-content:center;
+  padding:10rem 4rem 6rem 5rem;position:relative;z-index:2;
+}
+.hero-eyebrow{display:flex;align-items:center;gap:1rem;margin-bottom:2rem;opacity:0;transform:translateY(20px);transition:opacity .9s var(--ease) .2s,transform .9s var(--ease) .2s}
+.hero-eyebrow::before{content:'';width:2rem;height:1px;background:var(--gold)}
+.hero-name{
+  font-size:clamp(3.5rem,6vw,7rem);font-weight:300;letter-spacing:-.01em;line-height:.92;
+  margin-bottom:1.8rem;opacity:0;transform:translateY(30px);
+  transition:opacity 1s var(--ease) .4s,transform 1s var(--ease) .4s
+}
+.hero-name em{font-style:italic;color:var(--gold)}
+.hero-tagline{font-size:clamp(.9rem,1.3vw,1.1rem);color:var(--ivory-dim);max-width:38ch;line-height:1.75;margin-bottom:2rem;opacity:0;transform:translateY(20px);transition:opacity .9s var(--ease) .6s,transform .9s var(--ease) .6s}
+.hero-locs{font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:3rem;opacity:0;transition:opacity .9s var(--ease) .8s}
+.hero-ctas{display:flex;gap:1.2rem;flex-wrap:wrap;opacity:0;transition:opacity .9s var(--ease) 1s}
+.site-ready .hero-eyebrow,.site-ready .hero-name,.site-ready .hero-tagline,.site-ready .hero-locs,.site-ready .hero-ctas{opacity:1;transform:translateY(0)}
+
+.btn-fill{display:inline-block;padding:.9rem 2.2rem;background:var(--gold);color:var(--ink);font-family:var(--sans);font-size:.7rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;transition:background .3s,transform .3s}
+.btn-fill:hover{background:var(--gold-light);transform:translateY(-2px)}
+.btn-outline{display:inline-block;padding:.9rem 2.2rem;border:1px solid rgba(201,169,110,.4);color:var(--gold);font-family:var(--sans);font-size:.7rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;transition:border-color .3s,background .3s,transform .3s}
+.btn-outline:hover{border-color:var(--gold);background:rgba(201,169,110,.07);transform:translateY(-2px)}
+
+/* Hero right — constellation */
+.hero-right{position:relative;overflow:hidden;background:radial-gradient(ellipse at 60% 40%,rgba(201,169,110,.035) 0%,transparent 65%)}
+#constellation{width:100%;height:100%;display:block;cursor:crosshair}
+.sk-ghost{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.sk-ghost span{font-family:var(--serif);font-size:clamp(6rem,14vw,16rem);font-weight:300;color:transparent;-webkit-text-stroke:1px rgba(201,169,110,.1);letter-spacing:.08em;animation:skBreath 5s var(--ease) infinite alternate;user-select:none}
+@keyframes skBreath{0%{-webkit-text-stroke-color:rgba(201,169,110,.06)}100%{-webkit-text-stroke-color:rgba(201,169,110,.18)}}
+
+@media(max-width:768px){.hero{grid-template-columns:1fr;min-height:auto}.hero-left{padding:8rem 1.5rem 3rem}.hero-right{height:55vw;min-height:260px}}
+
+/* ============================================================ MARQUEE ============================================================ */
+.marquee-wrap{padding:1.6rem 0;background:var(--surface);border-top:1px solid var(--gold-pale);border-bottom:1px solid var(--gold-pale);overflow:hidden}
+.marquee-inner{display:flex;white-space:nowrap;animation:marquee 30s linear infinite}
+.marquee-inner:hover{animation-play-state:paused}
+.m-item{display:inline-flex;align-items:center;gap:1.8rem;padding:0 2rem;font-size:.65rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);white-space:nowrap;transition:color .3s}
+.m-item:hover{color:var(--gold)}
+.m-dot{width:3px;height:3px;border-radius:50%;background:var(--gold-dim);flex-shrink:0}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ============================================================
+   CINEMATIC HORIZONTAL SCROLL FILM
+   ============================================================ */
+.film-outer{
+  position:relative;
+  height:100vh;
+  overflow:hidden;
+}
+.film-track{
+  display:flex;
+  width:500vw; /* 5 scenes × 100vw */
+  height:100%;
+  will-change:transform;
+}
+.film-scene{
+  width:100vw;height:100%;
+  flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+}
+
+/* Scene backgrounds */
+.scene-0{background:linear-gradient(135deg,#0A0806 0%,#1A1508 50%,#0D0B09 100%)}
+.scene-1{background:linear-gradient(135deg,#0A0A12 0%,#0E0E1A 50%,#08080F 100%)}
+.scene-2{background:linear-gradient(135deg,#100A06 0%,#1A1008 50%,#0D0906 100%)}
+.scene-3{background:linear-gradient(135deg,#060A0A 0%,#081212 50%,#060E0E 100%)}
+.scene-4{background:linear-gradient(135deg,#0A0806 0%,#1C1408 50%,#0A0806 100%)}
+
+/* Scene ambient glow */
+.film-scene::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at var(--gx,50%) var(--gy,50%),rgba(201,169,110,.07) 0%,transparent 60%);
+  pointer-events:none;
+}
+.scene-0{--gx:30%;--gy:60%}
+.scene-1{--gx:70%;--gy:40%}
+.scene-2{--gx:40%;--gy:60%}
+.scene-3{--gx:60%;--gy:40%}
+.scene-4{--gx:50%;--gy:50%}
+
+/* Scene content */
+.scene-content{
+  position:relative;z-index:2;
+  max-width:900px;padding:0 4rem;
+  text-align:center;
+}
+.scene-num{
+  font-family:var(--serif);font-size:clamp(8rem,18vw,20rem);font-weight:300;
+  color:rgba(201,169,110,.04);
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  pointer-events:none;line-height:1;white-space:nowrap;user-select:none;
+  transition:color .6s var(--ease);
+}
+.film-scene.active .scene-num{color:rgba(201,169,110,.08)}
+
+.scene-label{
+  font-size:.6rem;font-weight:600;letter-spacing:.3em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:1.5rem;
+  opacity:0;transform:translateY(16px);transition:opacity .7s var(--ease) .1s,transform .7s var(--ease) .1s
+}
+.scene-title{
+  font-family:var(--serif);font-size:clamp(2.8rem,5.5vw,6rem);font-weight:300;
+  line-height:1;margin-bottom:1.5rem;
+  opacity:0;transform:translateY(24px);transition:opacity .8s var(--ease) .2s,transform .8s var(--ease) .2s
+}
+.scene-title em{font-style:italic;color:var(--gold)}
+.scene-body{
+  font-size:clamp(.85rem,1.2vw,1rem);color:var(--ivory-dim);max-width:52ch;margin:0 auto 2rem;line-height:1.8;
+  opacity:0;transform:translateY(16px);transition:opacity .7s var(--ease) .35s,transform .7s var(--ease) .35s
+}
+.scene-tags{
+  display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;
+  opacity:0;transform:translateY(12px);transition:opacity .6s var(--ease) .5s,transform .6s var(--ease) .5s
+}
+.scene-tag{
+  font-size:.6rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;
+  padding:.28rem .7rem;border:1px solid rgba(201,169,110,.25);color:var(--gold-dim)
+}
+.film-scene.active .scene-label,
+.film-scene.active .scene-title,
+.film-scene.active .scene-body,
+.film-scene.active .scene-tags{opacity:1;transform:translateY(0)}
+
+/* Film title card (scene 0) */
+.scene-title-card{
+  font-family:var(--serif);font-size:clamp(1rem,2vw,1.5rem);font-weight:300;
+  color:var(--ivory-dim);letter-spacing:.06em;margin-bottom:3rem;
+  opacity:0;transition:opacity 1.2s var(--ease) .3s
+}
+.film-scene.active .scene-title-card{opacity:1}
+
+/* Film progress dots */
+.film-dots{
+  position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);
+  display:flex;gap:.7rem;z-index:10;
+}
+.film-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:rgba(201,169,110,.25);
+  cursor:pointer;transition:background .3s,transform .3s
+}
+.film-dot.active{background:var(--gold);transform:scale(1.4)}
+
+/* Film nav arrows */
+.film-arrow{
+  position:absolute;top:50%;transform:translateY(-50%);
+  z-index:10;width:48px;height:48px;
+  border:1px solid rgba(201,169,110,.25);
+  background:rgba(10,8,6,.5);backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:border-color .3s,background .3s;
+  font-size:1.2rem;color:var(--gold);
+}
+.film-arrow:hover{border-color:var(--gold);background:rgba(201,169,110,.1)}
+.film-arrow-prev{left:2rem}
+.film-arrow-next{right:2rem}
+
+/* Scroll hint */
+.film-hint{
+  position:absolute;bottom:2.5rem;right:3rem;
+  font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);
+  display:flex;align-items:center;gap:.6rem;
+  animation:hintPulse 2.5s ease-in-out infinite;
+}
+.film-hint-arrow{font-size:.9rem;color:var(--gold)}
+@keyframes hintPulse{0%,100%{opacity:.4}50%{opacity:1}}
+
+@media(max-width:768px){
+  .film-outer{height:auto}
+  .film-track{width:100%;flex-direction:column}
+  .film-scene{width:100%;height:auto;min-height:100vh}
+  .film-arrow{display:none}
+  .film-hint{display:none}
+  .scene-content{padding:5rem 1.5rem}
+}
+
+/* ============================================================ CURTAIN ============================================================ */
+.curtain-section{
+  position:relative;height:100vh;min-height:600px;
+  display:flex;overflow:hidden;background:var(--ink);
+}
+.curtain-panel{
+  position:relative;flex:1;display:flex;flex-direction:column;
+  justify-content:flex-end;padding:3rem 2rem;overflow:hidden;
+  cursor:pointer;transition:flex .65s var(--ease);
+  border-right:1px solid rgba(201,169,110,.07);
+}
+.curtain-panel:last-child{border-right:none}
+.curtain-panel:nth-child(1){background:linear-gradient(160deg,#1C1508 0%,#0D0B09 60%,#1A1200 100%)}
+.curtain-panel:nth-child(2){background:linear-gradient(160deg,#0E0E14 0%,#0D0B09 60%,#0A0A12 100%)}
+.curtain-panel:nth-child(3){background:linear-gradient(160deg,#141210 0%,#0D0B09 60%,#1A1510 100%)}
+.curtain-panel:nth-child(4){background:linear-gradient(160deg,#0F1210 0%,#0D0B09 60%,#0C1008 100%)}
+
+.curtain-panel{clip-path:inset(0 50% 0 50%);animation:curtainOpen 1.1s var(--ease) forwards}
+.curtain-panel:nth-child(1){animation-delay:.05s}
+.curtain-panel:nth-child(2){animation-delay:.2s}
+.curtain-panel:nth-child(3){animation-delay:.35s}
+.curtain-panel:nth-child(4){animation-delay:.5s}
+@keyframes curtainOpen{from{clip-path:inset(0 50% 0 50%);opacity:0}to{clip-path:inset(0 0% 0 0%);opacity:1}}
+
+.curtain-section:hover .curtain-panel{flex:.55}
+.curtain-section:hover .curtain-panel:hover{flex:2.4}
+
+.curtain-bg-num{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-family:var(--serif);font-size:clamp(8rem,18vw,22rem);font-weight:300;
+  color:rgba(201,169,110,.04);line-height:1;pointer-events:none;
+  transition:color .5s var(--ease),transform .5s var(--ease);white-space:nowrap;user-select:none
+}
+.curtain-panel:hover .curtain-bg-num{color:rgba(201,169,110,.09);transform:translate(-50%,-50%) scale(1.04)}
+
+.curtain-vert{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-90deg);
+  font-size:.58rem;font-weight:600;letter-spacing:.3em;text-transform:uppercase;
+  color:rgba(201,169,110,.3);white-space:nowrap;
+  transition:opacity .35s var(--ease);pointer-events:none
+}
+.curtain-panel:hover .curtain-vert{opacity:0}
+
+.curtain-content{
+  position:relative;z-index:2;
+  transform:translateY(1.5rem);opacity:0;
+  transition:transform .5s var(--ease),opacity .5s var(--ease)
+}
+.curtain-panel:hover .curtain-content{transform:translateY(0);opacity:1}
+
+.curtain-panel::before{
+  content:'';position:absolute;top:0;left:0;
+  width:0;height:2px;background:var(--gold);
+  transition:width .55s var(--ease)
+}
+.curtain-panel:hover::before{width:100%}
+
+.c-num{font-family:var(--serif);font-size:.72rem;color:var(--gold);letter-spacing:.2em;display:block;margin-bottom:.5rem}
+.c-title{font-family:var(--serif);font-size:clamp(1.3rem,2.2vw,2rem);font-weight:400;color:var(--ivory);margin-bottom:.7rem;line-height:1.15}
+.c-desc{font-size:.78rem;color:var(--ivory-dim);line-height:1.75;margin-bottom:1.1rem;max-width:26ch}
+.c-tags{display:flex;flex-wrap:wrap;gap:.35rem}
+.c-tag{font-size:.56rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;padding:.22rem .6rem;border:1px solid rgba(201,169,110,.28);color:var(--gold-dim)}
+
+.curtain-hint{
+  position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
+  font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);
+  opacity:1;transition:opacity .4s;pointer-events:none;white-space:nowrap
+}
+.curtain-section:hover .curtain-hint{opacity:0}
+
+@media(max-width:768px){
+  .curtain-section{height:auto;flex-direction:column}
+  .curtain-panel{flex:none!important;height:260px;clip-path:none!important;opacity:1!important;animation:none!important;border-right:none;border-bottom:1px solid rgba(201,169,110,.07)}
+  .curtain-panel:last-child{border-bottom:none}
+  .curtain-content{transform:none;opacity:1}
+  .curtain-vert,.curtain-hint{display:none}
+}
+
+/* ============================================================ ABOUT ============================================================ */
+.about{padding:8rem 5rem;background:var(--ink)}
+.section-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:4rem;padding-bottom:1.5rem;border-bottom:1px solid var(--gold-pale)}
+.section-title{font-size:clamp(2rem,3.5vw,3.8rem);font-weight:300}
+.section-num{font-family:var(--serif);font-size:.72rem;color:var(--gold);letter-spacing:.2em;text-transform:uppercase}
+.about-inner{display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:center}
+.about-quote{font-family:var(--serif);font-size:clamp(1.5rem,2.4vw,2.3rem);font-weight:300;font-style:italic;line-height:1.4;color:var(--ivory);position:relative;padding-left:2rem}
+.about-quote::before{content:'';position:absolute;left:0;top:.3em;width:3px;height:80%;background:linear-gradient(to bottom,var(--gold),transparent)}
+.about-body{font-size:.87rem;color:var(--ivory-dim);line-height:1.85;margin-top:1.5rem}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:rgba(201,169,110,.07)}
+.stat-card{background:var(--surface);padding:2rem;text-align:center;transition:background .3s}
+.stat-card:hover{background:var(--surface-2)}
+.stat-num{font-family:var(--serif);font-size:3rem;font-weight:300;color:var(--gold);line-height:1;display:block;margin-bottom:.4rem}
+.stat-label{font-size:.62rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+@media(max-width:768px){.about{padding:5rem 1.5rem}.section-header{flex-direction:column;align-items:flex-start;gap:.5rem}.about-inner{grid-template-columns:1fr;gap:3rem}}
+
+/* ============================================================ CREDENTIALS ============================================================ */
+.credentials{padding:8rem 5rem;background:var(--surface)}
+.cred-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.8rem}
+.cred-item{padding:1.8rem;border:1px solid rgba(201,169,110,.09);transition:border-color .3s,background .3s}
+.cred-item:hover{border-color:rgba(201,169,110,.32);background:rgba(201,169,110,.03)}
+.cred-cat{font-size:.58rem;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:.7rem}
+.cred-title{font-family:var(--serif);font-size:1.05rem;font-weight:400;color:var(--ivory);margin-bottom:.35rem}
+.cred-detail{font-size:.76rem;color:var(--muted)}
+@media(max-width:768px){.credentials{padding:5rem 1.5rem}.cred-grid{grid-template-columns:1fr}}
+
+/* ============================================================ CTA ============================================================ */
+.cta{
+  padding:9rem 5rem;
+  background:linear-gradient(135deg,#1A1410 0%,#0A0806 40%,#1C1508 100%);
+  text-align:center;position:relative;overflow:hidden
+}
+.cta::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:700px;background:radial-gradient(circle,rgba(201,169,110,.055) 0%,transparent 70%);pointer-events:none}
+.cta-eyebrow{margin-bottom:1.5rem}
+.cta-headline{font-size:clamp(2.5rem,5vw,5.5rem);font-weight:300;max-width:16ch;margin:0 auto 1.5rem;line-height:1.02}
+.cta-sub{font-size:1rem;color:var(--ivory-dim);max-width:44ch;margin:0 auto 3rem;line-height:1.75}
+.cta-btn{
+  display:inline-block;padding:1.1rem 3.2rem;
+  background:transparent;border:1px solid var(--gold);
+  color:var(--gold);font-family:var(--sans);font-size:.72rem;font-weight:500;
+  letter-spacing:.2em;text-transform:uppercase;
+  position:relative;overflow:hidden;transition:color .35s,transform .3s
+}
+.cta-btn::before{content:'';position:absolute;inset:0;background:var(--gold);transform:translateX(-101%);transition:transform .4s var(--ease);z-index:-1}
+.cta-btn:hover{color:var(--ink);transform:translateY(-2px)}
+.cta-btn:hover::before{transform:translateX(0)}
+@media(max-width:768px){.cta{padding:6rem 1.5rem}}
+
+/* ============================================================ FOOTER ============================================================ */
+footer{padding:3rem 5rem;background:var(--ink);border-top:1px solid var(--gold-pale);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.5rem}
+.footer-brand{font-family:var(--serif);font-size:1rem;letter-spacing:.1em}
+.footer-brand em{font-style:normal;color:var(--gold)}
+.footer-links{display:flex;gap:2rem;list-style:none}
+.footer-links a{font-size:.62rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);transition:color .3s}
+.footer-links a:hover{color:var(--gold)}
+.footer-copy{font-size:.62rem;color:var(--muted);letter-spacing:.08em}
+@media(max-width:768px){footer{padding:2rem 1.5rem;flex-direction:column;align-items:flex-start}}
+
+/* ============================================================ SCROLL REVEAL ============================================================ */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.reveal.in{opacity:1;transform:translateY(0)}
+.d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}.d4{transition-delay:.4s}
+</style>
+</head>
+<body>
+
+<!-- Cursor glow -->
+<div id="cg"></div>
+
+<!-- ============================================================ GOLD INTRO ============================================================ -->
+<div id="goldIntro">
+  <canvas id="goldCanvas"></canvas>
+  <div class="intro-name" id="introName">
+    Stacy Kessler
+    <span>Art · Entertainment · Influence</span>
+  </div>
+  <button class="intro-skip" id="introSkip">Skip Intro</button>
+</div>
+
+<!-- ============================================================ NAV ============================================================ -->
+<nav id="nav">
+  <a href="#hero" class="nav-logo">Stacy <em>Kessler</em></a>
+  <ul class="nav-links">
+    <li><a href="#film">Four Worlds</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#credentials">Credentials</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ============================================================ HERO ============================================================ -->
+<section class="hero" id="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow"><span class="eyebrow">Art Advisory · Entertainment · Influence</span></div>
+    <h1 class="hero-name">Stacy<br><em>Kessler</em></h1>
+    <p class="hero-tagline">Art advisor. Actress. Entrepreneur. UGC creator. One woman, four worlds — all operating at the highest level.</p>
+    <p class="hero-locs eyebrow" style="color:var(--muted)">NY &nbsp;·&nbsp; Aspen &nbsp;·&nbsp; LA &nbsp;·&nbsp; Miami &nbsp;·&nbsp; Vienna &nbsp;·&nbsp; London &nbsp;·&nbsp; Zurich</p>
+    <div class="hero-ctas">
+      <a href="#contact" class="btn-fill">Work Together</a>
+      <a href="#film" class="btn-outline">Explore Work</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <canvas id="constellation"></canvas>
+    <div class="sk-ghost"><span>SK</span></div>
+  </div>
+</section>
+
+<!-- ============================================================ MARQUEE ============================================================ -->
+<div class="marquee-wrap">
+  <div class="marquee-inner" id="marqueeInner">
+    <span class="m-item">Netflix <span class="m-dot"></span></span>
+    <span class="m-item">Bravo <span class="m-dot"></span></span>
+    <span class="m-item">NBC Today Show <span class="m-dot"></span></span>
+    <span class="m-item">ABC Good Morning America <span class="m-dot"></span></span>
+    <span class="m-item">Mercedes-Benz <span class="m-dot"></span></span>
+    <span class="m-item">Jones Road Beauty <span class="m-dot"></span></span>
+    <span class="m-item">Il Makiage <span class="m-dot"></span></span>
+    <span class="m-item">HelloFresh <span class="m-dot"></span></span>
+    <span class="m-item">DraftKings <span class="m-dot"></span></span>
+    <span class="m-item">Barclays Center <span class="m-dot"></span></span>
+    <span class="m-item">Fordham MBA <span class="m-dot"></span></span>
+    <span class="m-item">IMDb Listed <span class="m-dot"></span></span>
+    <span class="m-item">US Patent Holder <span class="m-dot"></span></span>
+    <span class="m-item">Luce Foundation Award 2023 <span class="m-dot"></span></span>
+    <span class="m-item">4 Languages <span class="m-dot"></span></span>
+    <span class="m-item">Netflix <span class="m-dot"></span></span>
+    <span class="m-item">Bravo <span class="m-dot"></span></span>
+    <span class="m-item">NBC Today Show <span class="m-dot"></span></span>
+    <span class="m-item">ABC Good Morning America <span class="m-dot"></span></span>
+    <span class="m-item">Mercedes-Benz <span class="m-dot"></span></span>
+    <span class="m-item">Jones Road Beauty <span class="m-dot"></span></span>
+    <span class="m-item">Il Makiage <span class="m-dot"></span></span>
+    <span class="m-item">HelloFresh <span class="m-dot"></span></span>
+    <span class="m-item">DraftKings <span class="m-dot"></span></span>
+    <span class="m-item">Barclays Center <span class="m-dot"></span></span>
+    <span class="m-item">Fordham MBA <span class="m-dot"></span></span>
+    <span class="m-item">IMDb Listed <span class="m-dot"></span></span>
+    <span class="m-item">US Patent Holder <span class="m-dot"></span></span>
+    <span class="m-item">Luce Foundation Award 2023 <span class="m-dot"></span></span>
+    <span class="m-item">4 Languages <span class="m-dot"></span></span>
+  </div>
+</div>
+
+<!-- ============================================================ CINEMATIC FILM ============================================================ -->
+<div class="film-outer" id="film">
+  <div class="film-track" id="filmTrack">
+
+    <!-- Scene 0: Intro title card -->
+    <div class="film-scene scene-0 active" data-scene="0">
+      <div class="scene-num">SK</div>
+      <div class="scene-content">
+        <p class="scene-title-card serif">A Story in Four Acts</p>
+        <p class="scene-label eyebrow">The Stacy Kessler Universe</p>
+        <h2 class="scene-title">Four Worlds.<br><em>One Vision.</em></h2>
+        <p class="scene-body">From the gallery walls of Zurich to the studio floors of New York, from Netflix sets to Mercedes-Benz campaigns — Stacy Kessler operates at the intersection of art, entertainment, and influence.</p>
+        <div class="scene-tags">
+          <span class="scene-tag">Art Advisory</span>
+          <span class="scene-tag">Entertainment</span>
+          <span class="scene-tag">UGC &amp; Influence</span>
+          <span class="scene-tag">Entrepreneurship</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scene 1: Art Advisory -->
+    <div class="film-scene scene-1" data-scene="1">
+      <div class="scene-num">01</div>
+      <div class="scene-content">
+        <p class="scene-label eyebrow">Act I — Art Advisory</p>
+        <h2 class="scene-title">The Eye<br><em>That Builds Empires</em></h2>
+        <p class="scene-body">Private and corporate collection strategy across seven international markets. From acquisition to appraisal, Stacy builds investment-grade portfolios for discerning clients who understand that great art is both culture and capital.</p>
+        <div class="scene-tags">
+          <span class="scene-tag">Collection Strategy</span>
+          <span class="scene-tag">Acquisitions</span>
+          <span class="scene-tag">Appraisals</span>
+          <span class="scene-tag">NY · Aspen · LA · Miami · Vienna · London · Zurich</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scene 2: Entertainment -->
+    <div class="film-scene scene-2" data-scene="2">
+      <div class="scene-num">02</div>
+      <div class="scene-content">
+        <p class="scene-label eyebrow">Act II — Entertainment</p>
+        <h2 class="scene-title">The Screen<br><em>Remembers Her</em></h2>
+        <p class="scene-body">Two decades of screen and stage credits. NBC's Today Show. ABC's Good Morning America. Netflix and Bravo's Millionaire Matchmaker — 3 starring episodes. Night Birds opposite the late Treat Williams. Off-Broadway lead roles. International productions. IMDb listed.</p>
+        <div class="scene-tags">
+          <span class="scene-tag">Netflix · Bravo</span>
+          <span class="scene-tag">NBC Today Show</span>
+          <span class="scene-tag">ABC GMA</span>
+          <span class="scene-tag">Off-Broadway</span>
+          <span class="scene-tag">IMDb Listed</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scene 3: UGC & Influence -->
+    <div class="film-scene scene-3" data-scene="3">
+      <div class="scene-num">03</div>
+      <div class="scene-content">
+        <p class="scene-label eyebrow">Act III — UGC &amp; Influence</p>
+        <h2 class="scene-title">Content That<br><em>Actually Converts</em></h2>
+        <p class="scene-body">Scroll-stopping UGC and influencer content for premium brands. Professional polish meets authentic storytelling — trusted by Mercedes-Benz, Jones Road Beauty, Il Makiage, HelloFresh, DraftKings, Barclays Center, and more.</p>
+        <div class="scene-tags">
+          <span class="scene-tag">Mercedes-Benz</span>
+          <span class="scene-tag">Jones Road Beauty</span>
+          <span class="scene-tag">Il Makiage</span>
+          <span class="scene-tag">HelloFresh</span>
+          <span class="scene-tag">DraftKings</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scene 4: Entrepreneurship -->
+    <div class="film-scene scene-4" data-scene="4">
+      <div class="scene-num">04</div>
+      <div class="scene-content">
+        <p class="scene-label eyebrow">Act IV — Entrepreneurship</p>
+        <h2 class="scene-title">The Patent,<br><em>The Vision, The Brand</em></h2>
+        <p class="scene-body">Founder of Stacy Kessler Accessories — a sustainable lifestyle fashion brand with a US design and utility patent. MBA from Fordham University. Stacy Kessler Omnimedia Corp. Built on creativity, IP, and market vision.</p>
+        <div class="scene-tags">
+          <span class="scene-tag">US Design Patent</span>
+          <span class="scene-tag">US Utility Patent</span>
+          <span class="scene-tag">MBA · Fordham</span>
+          <span class="scene-tag">Sustainable Fashion</span>
+          <span class="scene-tag">Omnimedia Corp</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /film-track -->
+
+  <!-- Navigation -->
+  <button class="film-arrow film-arrow-prev" id="filmPrev">&#8592;</button>
+  <button class="film-arrow film-arrow-next" id="filmNext">&#8594;</button>
+
+  <!-- Progress dots -->
+  <div class="film-dots" id="filmDots">
+    <div class="film-dot active" data-dot="0"></div>
+    <div class="film-dot" data-dot="1"></div>
+    <div class="film-dot" data-dot="2"></div>
+    <div class="film-dot" data-dot="3"></div>
+    <div class="film-dot" data-dot="4"></div>
+  </div>
+
+  <div class="film-hint"><span>Scroll or swipe</span><span class="film-hint-arrow">&#8594;</span></div>
+</div>
+
+<!-- ============================================================ CURTAIN ============================================================ -->
+<div class="curtain-section" id="curtain">
+  <div class="curtain-panel">
+    <div class="curtain-bg-num">01</div>
+    <span class="curtain-vert">Art Advisory</span>
+    <div class="curtain-content">
+      <span class="c-num">01</span>
+      <h3 class="c-title">Art<br>Advisory</h3>
+      <p class="c-desc">Investment-grade collection strategy across seven international markets.</p>
+      <div class="c-tags"><span class="c-tag">Collections</span><span class="c-tag">Acquisitions</span><span class="c-tag">7 Markets</span></div>
+    </div>
+  </div>
+  <div class="curtain-panel">
+    <div class="curtain-bg-num">02</div>
+    <span class="curtain-vert">Entertainment</span>
+    <div class="curtain-content">
+      <span class="c-num">02</span>
+      <h3 class="c-title">Enter&shy;tainment</h3>
+      <p class="c-desc">Two decades of screen and stage credits — NBC, ABC, Netflix, Off-Broadway.</p>
+      <div class="c-tags"><span class="c-tag">Television</span><span class="c-tag">Film</span><span class="c-tag">Stage</span></div>
+    </div>
+  </div>
+  <div class="curtain-panel">
+    <div class="curtain-bg-num">03</div>
+    <span class="curtain-vert">UGC & Influence</span>
+    <div class="curtain-content">
+      <span class="c-num">03</span>
+      <h3 class="c-title">UGC &amp;<br>Influence</h3>
+      <p class="c-desc">Premium brand content trusted by Mercedes-Benz, Jones Road Beauty, and more.</p>
+      <div class="c-tags"><span class="c-tag">On-Camera</span><span class="c-tag">Brand Stories</span><span class="c-tag">Conversions</span></div>
+    </div>
+  </div>
+  <div class="curtain-panel">
+    <div class="curtain-bg-num">04</div>
+    <span class="curtain-vert">Entrepreneurship</span>
+    <div class="curtain-content">
+      <span class="c-num">04</span>
+      <h3 class="c-title">Entre&shy;preneurship</h3>
+      <p class="c-desc">Founder, patent holder, MBA. Stacy Kessler Accessories + Omnimedia Corp.</p>
+      <div class="c-tags"><span class="c-tag">US Patent</span><span class="c-tag">MBA · Fordham</span><span class="c-tag">Fashion IP</span></div>
+    </div>
+  </div>
+  <span class="curtain-hint eyebrow">Hover to explore</span>
+</div>
+
+<!-- ============================================================ ABOUT ============================================================ -->
+<section class="about" id="about">
+  <div class="section-header reveal">
+    <h2 class="section-title">The Woman<br><em class="gold">Behind the Work</em></h2>
+    <span class="section-num eyebrow">About</span>
+  </div>
+  <div class="about-inner">
+    <div class="reveal d1">
+      <blockquote class="about-quote">"She doesn't just advise on art — she <em>is</em> the art. Every room she enters, every brand she touches, every screen she graces."</blockquote>
+      <p class="about-body">Stacy Kessler is a New York City–based multi-hyphenate operating at the intersection of art, entertainment, and influence. Founder of Stacy Kessler Art Advisory and Stacy Kessler Accessories — a sustainable fashion brand holding a US design and utility patent — she brings an MBA from Fordham University, a Master's in Communications from Wright State, and a BA from Tel Aviv University to every engagement.</p>
+      <p class="about-body" style="margin-top:1rem">Fluent in English, Spanish, Hebrew, and French, she operates across seven international markets. A 2023 Luce Foundation Community Leadership Award recipient, Stacy is as committed to her community as she is to her craft.</p>
+    </div>
+    <div class="reveal d2">
+      <div class="stats-grid">
+        <div class="stat-card"><span class="stat-num count-up" data-target="7">0</span><span class="stat-label">Global Markets</span></div>
+        <div class="stat-card"><span class="stat-num count-up" data-target="4">0</span><span class="stat-label">Languages Spoken</span></div>
+        <div class="stat-card"><span class="stat-num count-up" data-target="3">0</span><span class="stat-label">Advanced Degrees</span></div>
+        <div class="stat-card"><span class="stat-num count-up" data-target="20">0</span><span class="stat-label">Years on Screen</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ CREDENTIALS ============================================================ -->
+<section class="credentials" id="credentials">
+  <div class="section-header reveal">
+    <h2 class="section-title">The Full<br><em class="gold">Credential Stack</em></h2>
+    <span class="section-num eyebrow">Credentials</span>
+  </div>
+  <div class="cred-grid">
+    <div class="cred-item reveal d1"><div class="cred-cat">Education</div><div class="cred-title">MBA — Fordham University</div><div class="cred-detail">Graduate School of Business · New York City</div></div>
+    <div class="cred-item reveal d2"><div class="cred-cat">Education</div><div class="cred-title">M.A. Communications — Wright State</div><div class="cred-detail">Graduate Studies · Dayton, Ohio</div></div>
+    <div class="cred-item reveal d3"><div class="cred-cat">Education</div><div class="cred-title">B.A. — Tel Aviv University</div><div class="cred-detail">Undergraduate Studies · Tel Aviv, Israel</div></div>
+    <div class="cred-item reveal d1"><div class="cred-cat">Screen Credits</div><div class="cred-title">Netflix / Bravo — Millionaire Matchmaker</div><div class="cred-detail">3 Episodes · Starring Role</div></div>
+    <div class="cred-item reveal d2"><div class="cred-cat">Screen Credits</div><div class="cred-title">NBC — The Today Show</div><div class="cred-detail">Recurring Appearances</div></div>
+    <div class="cred-item reveal d3"><div class="cred-cat">Screen Credits</div><div class="cred-title">ABC — Good Morning America</div><div class="cred-detail">Featured Appearances</div></div>
+    <div class="cred-item reveal d1"><div class="cred-cat">Screen Credits</div><div class="cred-title">Night Birds — Television Series</div><div class="cred-detail">Acted opposite Treat Williams · IMDb Listed</div></div>
+    <div class="cred-item reveal d2"><div class="cred-cat">IP &amp; Entrepreneurship</div><div class="cred-title">US Design &amp; Utility Patent</div><div class="cred-detail">Stacy Kessler Accessories · Sustainable Fashion</div></div>
+    <div class="cred-item reveal d3"><div class="cred-cat">Recognition</div><div class="cred-title">Luce Foundation Community Leadership Award</div><div class="cred-detail">2023 · Civic &amp; Philanthropic Excellence</div></div>
+    <div class="cred-item reveal d1"><div class="cred-cat">Brand Partnerships</div><div class="cred-title">Mercedes-Benz · Jones Road Beauty · Il Makiage</div><div class="cred-detail">UGC &amp; Influencer Campaigns</div></div>
+    <div class="cred-item reveal d2"><div class="cred-cat">Brand Partnerships</div><div class="cred-title">HelloFresh · DraftKings · Barclays Center</div><div class="cred-detail">Content Creation &amp; Brand Storytelling</div></div>
+    <div class="cred-item reveal d3"><div class="cred-cat">Philanthropy</div><div class="cred-title">Wounded Warrior Project · Susan G. Komen</div><div class="cred-detail">Active Supporter · Mommy's Heart Foundation</div></div>
+  </div>
+</section>
+
+<!-- ============================================================ CTA ============================================================ -->
+<section class="cta" id="contact">
+  <p class="eyebrow cta-eyebrow reveal">Let's Create Something</p>
+  <h2 class="cta-headline serif reveal d1">Your brand deserves a <em class="gold">story worth telling.</em></h2>
+  <p class="cta-sub reveal d2">Whether you're building a collection, launching a campaign, or looking for on-camera talent that converts — let's talk.</p>
+  <a href="mailto:stacy@stacykessler.com" class="cta-btn reveal d3">stacy@stacykessler.com</a>
+</section>
+
+<!-- ============================================================ FOOTER ============================================================ -->
+<footer>
+  <div class="footer-brand">Stacy <em>Kessler</em> Omnimedia Corp</div>
+  <ul class="footer-links">
+    <li><a href="https://stacykessler.com" target="_blank">Website</a></li>
+    <li><a href="mailto:stacy@stacykessler.com">Email</a></li>
+    <li><a href="#hero">Top ↑</a></li>
+  </ul>
+  <p class="footer-copy">© 2024 Stacy Kessler Omnimedia Corp · All Rights Reserved</p>
+</footer>
+
+<!-- ============================================================ SCRIPTS ============================================================ -->
+<script>
+/* ---- Cursor glow ---- */
+const cg = document.getElementById('cg');
+if (window.matchMedia('(hover:hover)').matches) {
+  document.addEventListener('mousemove', e => {
+    cg.style.left = e.clientX + 'px';
+    cg.style.top  = e.clientY + 'px';
+  });
+}
+
+/* ---- Nav scroll ---- */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 60));
+
+/* ---- Scroll reveal ---- */
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); revObs.unobserve(e.target); } });
+}, { threshold: .1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => revObs.observe(el));
+
+/* ---- Count-up ---- */
+function countUp(el) {
+  const target = +el.dataset.target, dur = 1800, start = performance.now();
+  const tick = now => {
+    const p = Math.min((now - start) / dur, 1);
+    el.textContent = Math.round((1 - Math.pow(1 - p, 3)) * target);
+    if (p < 1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+const cuObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { countUp(e.target); cuObs.unobserve(e.target); } });
+}, { threshold: .5 });
+document.querySelectorAll('.count-up').forEach(el => cuObs.observe(el));
+
+/* ============================================================
+   GOLD INTRO — Canvas fluid simulation
+   ============================================================ */
+(function goldIntro() {
+  const intro   = document.getElementById('goldIntro');
+  const canvas  = document.getElementById('goldCanvas');
+  const nameEl  = document.getElementById('introName');
+  const skipBtn = document.getElementById('introSkip');
+  const ctx     = canvas.getContext('2d');
+  let W, H, particles = [], raf, done = false;
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  // Gold particle drip
+  class Drop {
+    constructor() { this.reset(); }
+    reset() {
+      this.x  = Math.random() * W;
+      this.y  = Math.random() * H * .4 - H * .2;
+      this.vy = 1.5 + Math.random() * 4;
+      this.vx = (Math.random() - .5) * 1.2;
+      this.r  = 2 + Math.random() * 8;
+      this.alpha = .7 + Math.random() * .3;
+      this.life = 0;
+      this.maxLife = 80 + Math.random() * 120;
+      const g = 180 + Math.floor(Math.random() * 50);
+      this.color = `rgba(${g},${Math.floor(g * .7)},${Math.floor(g * .2)},`;
+    }
+    update() {
+      this.vy += .08;
+      this.x  += this.vx;
+      this.y  += this.vy;
+      this.life++;
+      const a = this.alpha * (1 - this.life / this.maxLife);
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+      ctx.fillStyle = this.color + Math.max(0, a) + ')';
+      ctx.fill();
+      if (this.life > this.maxLife || this.y > H + 20) this.reset();
+    }
+  }
+
+  // Gold pool at bottom
+  let poolY = H + 60, poolTargetY = H * .75;
+  let poolAlpha = 0;
+
+  function drawPool() {
+    if (poolAlpha <= 0) return;
+    const grad = ctx.createLinearGradient(0, poolY, 0, H);
+    grad.addColorStop(0, `rgba(201,169,110,${poolAlpha * .6})`);
+    grad.addColorStop(.3, `rgba(180,140,70,${poolAlpha * .8})`);
+    grad.addColorStop(1, `rgba(120,90,30,${poolAlpha})`);
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, poolY, W, H - poolY);
+
+    // Shimmer ripples
+    for (let i = 0; i < 5; i++) {
+      const rx = (W * .1) + (W * .8) * (i / 5) + Math.sin(Date.now() * .001 + i) * 30;
+      const ry = poolY + 8 + i * 4;
+      ctx.beginPath();
+      ctx.ellipse(rx, ry, 40 + i * 20, 3, 0, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(232,213,163,${poolAlpha * .15})`;
+      ctx.fill();
+    }
+  }
+
+  let frame = 0;
+  function loop() {
+    if (done) return;
+    ctx.clearRect(0, 0, W, H);
+
+    // Background
+    ctx.fillStyle = '#0A0806';
+    ctx.fillRect(0, 0, W, H);
+
+    // Pool rises
+    if (frame > 40) {
+      poolY = Math.max(poolTargetY, poolY - 1.2);
+      poolAlpha = Math.min(1, poolAlpha + .015);
+    }
+    drawPool();
+
+    // Drops
+    particles.forEach(p => p.update());
+
+    // Name reveal
+    if (frame === 60) nameEl.classList.add('show');
+
+    // Drain effect after hold
+    if (frame > 200) {
+      poolY -= 2.5;
+      poolAlpha = Math.max(0, poolAlpha - .012);
+      particles.forEach(p => { p.vy += .15; });
+    }
+
+    // End intro
+    if (frame > 280) {
+      endIntro();
+      return;
+    }
+
+    frame++;
+    raf = requestAnimationFrame(loop);
+  }
+
+  function endIntro() {
+    if (done) return;
+    done = true;
+    cancelAnimationFrame(raf);
+    intro.style.transition = 'opacity .9s ease, transform .9s ease';
+    intro.style.opacity = '0';
+    intro.style.transform = 'scale(1.04)';
+    setTimeout(() => {
+      intro.style.display = 'none';
+      document.body.classList.add('site-ready');
+    }, 900);
+  }
+
+  skipBtn.addEventListener('click', endIntro);
+
+  resize();
+  for (let i = 0; i < 80; i++) particles.push(new Drop());
+  window.addEventListener('resize', resize);
+  loop();
+})();
+
+/* ============================================================
+   PARTICLE CONSTELLATION
+   ============================================================ */
+(function constellation() {
+  const canvas = document.getElementById('constellation');
+  const wrap   = canvas.parentElement;
+  const ctx    = canvas.getContext('2d');
+  const G = 'rgba(201,169,110,';
+  const N = 110, LINK = 115, MR = 150;
+  let W, H, mouse = { x: -999, y: -999 }, pts = [], raf2, skTimer = 0, skTargets = null;
+
+  function resize() {
+    W = canvas.width  = wrap.offsetWidth;
+    H = canvas.height = wrap.offsetHeight;
+    skTargets = null; skTimer = 0;
+  }
+
+  class P {
+    constructor() {
+      this.x  = Math.random() * W;
+      this.y  = Math.random() * H;
+      this.vx = (Math.random() - .5) * .3;
+      this.vy = (Math.random() - .5) * .3;
+      this.r  = .5 + Math.random() * 1.5;
+      this.a  = .2 + Math.random() * .5;
+      this.ph = Math.random() * Math.PI * 2;
+      this.ps = .007 + Math.random() * .01;
+    }
+    tick() {
+      this.ph += this.ps;
+      const a = this.a + Math.sin(this.ph) * .1;
+      const dx = this.x - mouse.x, dy = this.y - mouse.y;
+      const d  = Math.sqrt(dx*dx + dy*dy);
+      if (d < MR && d > 1) {
+        const f = (MR - d) / MR;
+        this.vx += dx / d * f * .14;
+        this.vy += dy / d * f * .14;
+      }
+      this.vx *= .978; this.vy *= .978;
+      this.x += this.vx; this.y += this.vy;
+      if (this.x < -8) this.x = W + 8;
+      if (this.x > W+8) this.x = -8;
+      if (this.y < -8) this.y = H + 8;
+      if (this.y > H+8) this.y = -8;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
+      ctx.fillStyle = G + Math.max(.05, Math.min(.9, a)) + ')';
+      ctx.fill();
+    }
+  }
+
+  function getSK() {
+    const tpts = [], cx = W*.5, cy = H*.5, sc = Math.min(W,H)*.26;
+    for (let i = 0; i < N*.5; i++) {
+      const t = i/(N*.5), ang = t*Math.PI*2.5 - Math.PI*.5;
+      const flip = t < .5 ? 1 : -1;
+      tpts.push({ x: cx - sc*.38 + Math.cos(ang)*sc*.36*flip, y: cy + (t<.5?-sc*.2:sc*.2) + Math.sin(ang)*sc*.5 });
+    }
+    for (let i = 0; i < N*.5; i++) {
+      const t = i/(N*.5), ox = cx + sc*.15;
+      if (t < .33) tpts.push({ x: ox, y: cy - sc*.44 + t*3*sc*.88 });
+      else if (t < .66) { const tt=(t-.33)/.33; tpts.push({ x: ox+tt*sc*.44, y: cy-tt*sc*.44 }); }
+      else { const tt=(t-.66)/.34; tpts.push({ x: ox+tt*sc*.44, y: cy+tt*sc*.44 }); }
+    }
+    return tpts;
+  }
+
+  function links() {
+    for (let i = 0; i < pts.length; i++) {
+      for (let j = i+1; j < pts.length; j++) {
+        const dx = pts[i].x-pts[j].x, dy = pts[i].y-pts[j].y;
+        const d  = Math.sqrt(dx*dx+dy*dy);
+        if (d < LINK) {
+          ctx.beginPath();
+          ctx.moveTo(pts[i].x, pts[i].y);
+          ctx.lineTo(pts[j].x, pts[j].y);
+          ctx.strokeStyle = G + (1-d/LINK)*.16 + ')';
+          ctx.lineWidth = .55;
+          ctx.stroke();
+        }
+      }
+    }
+  }
+
+  function loop2() {
+    ctx.clearRect(0, 0, W, H);
+    const gr = ctx.createRadialGradient(W*.5,H*.5,0,W*.5,H*.5,Math.max(W,H)*.6);
+    gr.addColorStop(0,'rgba(201,169,110,.02)'); gr.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle = gr; ctx.fillRect(0,0,W,H);
+
+    if (skTimer < 160) {
+      if (!skTargets) skTargets = getSK();
+      const prog = Math.min(skTimer/75,1), e = 1-Math.pow(1-prog,3);
+      pts.forEach((p,i) => { if(skTargets[i]){ p.x+=(skTargets[i].x-p.x)*.045*e; p.y+=(skTargets[i].y-p.y)*.045*e; } });
+    } else if (skTimer < 220) {
+      const prog = (skTimer-160)/60;
+      pts.forEach(p => { p.vx+=(Math.random()-.5)*.35*prog; p.vy+=(Math.random()-.5)*.35*prog; });
+    }
+    skTimer++;
+    links();
+    pts.forEach(p => p.tick());
+    raf2 = requestAnimationFrame(loop2);
+  }
+
+  canvas.addEventListener('mousemove', e => { const r=canvas.getBoundingClientRect(); mouse.x=e.clientX-r.left; mouse.y=e.clientY-r.top; });
+  canvas.addEventListener('mouseleave', () => { mouse.x=-999; mouse.y=-999; });
+  canvas.addEventListener('touchmove', e => { const r=canvas.getBoundingClientRect(),t=e.touches[0]; mouse.x=t.clientX-r.left; mouse.y=t.clientY-r.top; e.preventDefault(); }, {passive:false});
+  canvas.addEventListener('touchend', () => { mouse.x=-999; mouse.y=-999; });
+
+  function init2() { resize(); pts=[]; for(let i=0;i<N;i++) pts.push(new P()); cancelAnimationFrame(raf2); loop2(); }
+  window.addEventListener('resize', init2);
+  window.addEventListener('load', init2);
+  if (document.readyState==='complete') init2();
+})();
+
+/* ============================================================
+   CINEMATIC FILM — Horizontal scroll + keyboard + touch
+   ============================================================ */
+(function film() {
+  const track  = document.getElementById('filmTrack');
+  const scenes = Array.from(document.querySelectorAll('.film-scene'));
+  const dots   = Array.from(document.querySelectorAll('.film-dot'));
+  const prevBtn = document.getElementById('filmPrev');
+  const nextBtn = document.getElementById('filmNext');
+  let current = 0, isAnimating = false;
+
+  // Disable on mobile (stacked vertically)
+  function isMobile() { return window.innerWidth <= 768; }
+
+  function goTo(idx) {
+    if (isAnimating || isMobile()) return;
+    idx = Math.max(0, Math.min(scenes.length - 1, idx));
+    if (idx === current) return;
+    isAnimating = true;
+
+    scenes[current].classList.remove('active');
+    dots[current].classList.remove('active');
+
+    current = idx;
+    track.style.transition = 'transform .75s cubic-bezier(0.25,0.46,0.45,0.94)';
+    track.style.transform  = `translateX(-${current * 100}vw)`;
+
+    scenes[current].classList.add('active');
+    dots[current].classList.add('active');
+
+    setTimeout(() => { isAnimating = false; }, 800);
+  }
+
+  // Dots
+  dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.dot)));
+
+  // Arrows
+  prevBtn.addEventListener('click', () => goTo(current - 1));
+  nextBtn.addEventListener('click', () => goTo(current + 1));
+
+  // Keyboard
+  document.addEventListener('keydown', e => {
+    if (isMobile()) return;
+    const outer = document.getElementById('film');
+    const rect  = outer.getBoundingClientRect();
+    if (rect.top > 100 || rect.bottom < 0) return;
+    if (e.key === 'ArrowRight') goTo(current + 1);
+    if (e.key === 'ArrowLeft')  goTo(current - 1);
+  });
+
+  // Wheel scroll inside film section
+  let wheelLock = false;
+  document.getElementById('film').addEventListener('wheel', e => {
+    if (isMobile()) return;
+    if (wheelLock) return;
+    e.preventDefault();
+    wheelLock = true;
+    if (e.deltaY > 30 || e.deltaX > 30)  goTo(current + 1);
+    if (e.deltaY < -30 || e.deltaX < -30) goTo(current - 1);
+    setTimeout(() => { wheelLock = false; }, 900);
+  }, { passive: false });
+
+  // Touch swipe
+  let touchStartX = 0;
+  document.getElementById('film').addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+  document.getElementById('film').addEventListener('touchend', e => {
+    if (isMobile()) return;
+    const dx = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(dx) > 50) goTo(current + (dx > 0 ? 1 : -1));
+  });
+
+  // Init first scene active
+  scenes[0].classList.add('active');
+  dots[0].classList.add('active');
+  track.style.transform = 'translateX(0)';
+})();
+</script>
+</body>
+</html>
