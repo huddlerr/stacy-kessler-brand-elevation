@@ -580,10 +580,95 @@ footer p{font-size:.65rem;color:var(--muted);letter-spacing:.1em}
   .info-strip{grid-template-columns:1fr 1fr}
   .step-label{display:none}
 }
+/* ---- LIVE SPOTS COUNTER ---- */
+.spots-bar{
+  display:flex;align-items:center;justify-content:center;gap:1.5rem;
+  padding:1rem 2rem;
+  background:var(--surface);
+  border-bottom:1px solid var(--surface-2);
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  font-size:.7rem;font-weight:500;letter-spacing:.1em;
+  color:var(--ivory-dim);
+  transform:translateY(-100%);
+  transition:transform .5s var(--ease-out);
+}
+.spots-bar.visible{transform:translateY(0)}
+.spots-count{
+  display:inline-flex;align-items:center;gap:.4rem;
+  color:var(--fire);font-weight:700;font-size:.8rem;
+}
+.spots-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--success);
+  animation:dot-pulse 2s ease-in-out infinite;
+}
+.spots-dot.low{background:var(--fire)}
+.spots-dot.full{background:var(--error);animation:none}
+@keyframes dot-pulse{0%,100%{opacity:.4}50%{opacity:1}}
+
+/* ---- COUNTDOWN ---- */
+.countdown{
+  display:flex;gap:.5rem;
+  opacity:0;transform:translateY(20px);
+  animation:hero-in .8s var(--ease-out) 1.3s forwards;
+  margin-bottom:2rem;
+}
+.countdown-unit{
+  display:flex;flex-direction:column;align-items:center;
+  background:var(--surface);
+  border:1px solid var(--surface-3);
+  border-radius:var(--radius);
+  padding:.8rem 1rem;
+  min-width:64px;
+}
+.countdown-num{
+  font-family:var(--serif);font-size:1.6rem;font-weight:400;
+  color:var(--fire);line-height:1;
+  font-variant-numeric:tabular-nums;
+}
+.countdown-label{
+  font-size:.45rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--muted);margin-top:.3rem;
+}
+
+/* ---- PROGRESS BAR (spots) ---- */
+.spots-progress{
+  max-width:720px;width:100%;margin:0 auto 1rem;
+  opacity:0;transform:translateY(20px);
+  animation:hero-in .8s var(--ease-out) 1s forwards;
+}
+.spots-progress-bar{
+  width:100%;height:4px;
+  background:var(--surface-2);
+  border-radius:2px;
+  overflow:hidden;
+}
+.spots-progress-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--success),var(--fire));
+  border-radius:2px;
+  transition:width 1.5s var(--ease-out);
+  width:0;
+}
+.spots-progress-text{
+  display:flex;justify-content:space-between;
+  font-size:.6rem;font-weight:500;letter-spacing:.1em;
+  color:var(--muted);margin-top:.4rem;
+}
+.spots-progress-text .highlight{color:var(--fire);font-weight:700}
+
 .in{opacity:1!important;transform:translateY(0)!important}
 </style>
 </head>
 <body>
+
+<!-- Live Spots Counter Bar -->
+<div class="spots-bar" id="spotsBar">
+  <span><span class="spots-dot" id="spotsDot"></span></span>
+  <span><span class="spots-count" id="spotsCount">—</span> spots remaining</span>
+  <span>·</span>
+  <span>Registration closes <strong style="color:var(--fire)">Feb 28</strong></span>
+</div>
 
 <!-- Court Lines Background Canvas -->
 <canvas id="courtCanvas"></canvas>
@@ -629,6 +714,35 @@ footer p{font-size:.65rem;color:var(--muted);letter-spacing:.1em}
       <div class="info-card-icon">💰</div>
       <div class="info-card-label">Entry</div>
       <div class="info-card-value fire">$30/player</div>
+    </div>
+  </div>
+
+  <!-- Spots Progress Bar -->
+  <div class="spots-progress" id="spotsProgress">
+    <div class="spots-progress-bar"><div class="spots-progress-fill" id="spotsProgressFill"></div></div>
+    <div class="spots-progress-text">
+      <span><span class="highlight" id="spotsRegistered">0</span> registered</span>
+      <span><span class="highlight" id="spotsRemaining">64</span> spots left</span>
+    </div>
+  </div>
+
+  <!-- Countdown to Registration Deadline -->
+  <div class="countdown" id="countdown">
+    <div class="countdown-unit">
+      <div class="countdown-num" id="cdDays">--</div>
+      <div class="countdown-label">Days</div>
+    </div>
+    <div class="countdown-unit">
+      <div class="countdown-num" id="cdHours">--</div>
+      <div class="countdown-label">Hours</div>
+    </div>
+    <div class="countdown-unit">
+      <div class="countdown-num" id="cdMins">--</div>
+      <div class="countdown-label">Mins</div>
+    </div>
+    <div class="countdown-unit">
+      <div class="countdown-num" id="cdSecs">--</div>
+      <div class="countdown-label">Secs</div>
     </div>
   </div>
 
@@ -1003,51 +1117,25 @@ footer p{font-size:.65rem;color:var(--muted);letter-spacing:.1em}
   form.addEventListener('input', clearFieldError);
   form.addEventListener('change', clearFieldError);
 
-  /* ---- SUBMIT TO AIRTABLE ---- */
+  /* ---- SUBMIT VIA SERVER API (Airtable proxied securely) ---- */
   async function submitForm(){
     btnNext.textContent = 'Submitting...';
     btnNext.style.pointerEvents = 'none';
     btnNext.style.opacity = '.6';
 
     const fd = new FormData(form);
-    const data = {
-      fields: {
-        "Name":        fd.get('name'),
-        "Email":       fd.get('email'),
-        "Height":      fd.get('height'),
-        "Experience":  fd.get('experience'),
-        "Captain":     fd.get('captain'),
-        "3pt Contest": fd.get('threePoint'),
-        "Shirt Size":  fd.get('shirtSize'),
-        "Referral":    fd.get('referral')
-      }
-    };
-
-    // --- AIRTABLE CONFIG ---
-    // Replace these with your actual Airtable base ID, table name, and API key
-    const AIRTABLE_BASE   = 'YOUR_BASE_ID';
-    const AIRTABLE_TABLE  = 'Tournament%20Registrations';
-    const AIRTABLE_TOKEN  = 'YOUR_AIRTABLE_PAT';
+    // Append photo file if present
+    const photoFile = document.getElementById('photoInput').files[0];
+    if(photoFile) fd.append('photo', photoFile);
 
     try {
-      const res = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE}/${AIRTABLE_TABLE}`, {
+      const res = await fetch('/api/register', {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${AIRTABLE_TOKEN}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
+        body: fd,
       });
-      if(!res.ok) throw new Error('Airtable error');
+      const result = await res.json();
 
-      // Handle photo upload separately if present
-      const photoFile = document.getElementById('photoInput').files[0];
-      if(photoFile){
-        // Note: Airtable attachment uploads require a URL.
-        // For direct file uploads, you'd use a service like Cloudinary or S3,
-        // then patch the Airtable record with the URL.
-        console.log('Photo upload would be handled via Cloudinary/S3 → Airtable attachment field');
-      }
+      if(!res.ok) throw new Error(result.error || 'Registration failed');
 
       showSuccess();
     } catch(err){
@@ -1055,7 +1143,7 @@ footer p{font-size:.65rem;color:var(--muted);letter-spacing:.1em}
       btnNext.textContent = 'Submit Registration →';
       btnNext.style.pointerEvents = '';
       btnNext.style.opacity = '';
-      alert('Registration failed — please try again or contact ajobrien03@gmail.com');
+      alert(err.message || 'Registration failed — please try again or contact ajobrien03@gmail.com');
     }
   }
 
@@ -1160,6 +1248,82 @@ footer p{font-size:.65rem;color:var(--muted);letter-spacing:.1em}
     preview.classList.remove('show');
     zone.style.display = '';
   });
+})();
+
+/* ============================================================
+   COUNTDOWN TIMER — Registration deadline Feb 28
+   ============================================================ */
+(function(){
+  const deadline = new Date('2026-02-28T23:59:59-05:00').getTime();
+  const els = {
+    days: document.getElementById('cdDays'),
+    hours: document.getElementById('cdHours'),
+    mins: document.getElementById('cdMins'),
+    secs: document.getElementById('cdSecs'),
+  };
+  const container = document.getElementById('countdown');
+
+  function tick(){
+    const now = Date.now();
+    const diff = deadline - now;
+
+    if(diff <= 0){
+      container.innerHTML = '<div style="color:var(--error);font-size:.8rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase">Registration Closed</div>';
+      return;
+    }
+
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+
+    els.days.textContent = String(d).padStart(2,'0');
+    els.hours.textContent = String(h).padStart(2,'0');
+    els.mins.textContent = String(m).padStart(2,'0');
+    els.secs.textContent = String(s).padStart(2,'0');
+
+    requestAnimationFrame(()=> setTimeout(tick, 1000));
+  }
+  tick();
+})();
+
+/* ============================================================
+   LIVE SPOTS — Fetch from /api/spots
+   ============================================================ */
+(function(){
+  const bar = document.getElementById('spotsBar');
+  const dot = document.getElementById('spotsDot');
+  const countEl = document.getElementById('spotsCount');
+  const fillEl = document.getElementById('spotsProgressFill');
+  const registeredEl = document.getElementById('spotsRegistered');
+  const remainingEl = document.getElementById('spotsRemaining');
+
+  async function fetchSpots(){
+    try {
+      const res = await fetch('/api/spots');
+      if(!res.ok) return;
+      const data = await res.json();
+
+      countEl.textContent = data.remaining;
+      registeredEl.textContent = data.registered;
+      remainingEl.textContent = data.remaining;
+
+      const pct = Math.min(100, (data.registered / data.total) * 100);
+      fillEl.style.width = pct + '%';
+
+      if(data.remaining <= 10) dot.classList.add('low');
+      if(data.remaining === 0) dot.classList.add('full');
+
+      bar.classList.add('visible');
+    } catch {
+      // API not available (static hosting) — hide the bar
+      bar.remove();
+    }
+  }
+
+  // Fetch on load, then every 30s
+  fetchSpots();
+  setInterval(fetchSpots, 30000);
 })();
 
 /* ============================================================
