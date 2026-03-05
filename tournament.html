@@ -667,7 +667,7 @@ footer p{font-size:.65rem;color:var(--muted);letter-spacing:.1em}
   <span><span class="spots-dot" id="spotsDot"></span></span>
   <span><span class="spots-count" id="spotsCount">—</span> spots remaining</span>
   <span>·</span>
-  <span>Registration closes <strong style="color:var(--fire)">Feb 28</strong></span>
+  <span>Tournament <strong style="color:var(--fire)">March 21</strong></span>
 </div>
 
 <!-- Court Lines Background Canvas -->
@@ -767,7 +767,7 @@ footer p{font-size:.65rem;color:var(--muted);letter-spacing:.1em}
     <div class="form-header">
       <span class="eyebrow">Player Registration</span>
       <h2>Lock In Your Spot</h2>
-      <p>Teams are drafted two weeks before tip-off. Register before <strong style="color:var(--fire)">February 28</strong> to secure your place.</p>
+      <p>8 teams, double elimination. Captains draft teams before tip-off on <strong style="color:var(--fire)">March 21</strong>.</p>
     </div>
 
     <!-- Step Indicator -->
@@ -851,7 +851,7 @@ footer p{font-size:.65rem;color:var(--muted);letter-spacing:.1em}
                 </div>
               </label>
             </div>
-            <p style="font-size:.7rem;color:var(--muted);margin-top:.6rem">Cash prizes for 1st place & runner-up. Entry must be paid by Feb 28.</p>
+            <p style="font-size:.7rem;color:var(--muted);margin-top:.6rem">Cash prizes for 1st place & runner-up. Pay entry in cash or Venmo.</p>
           </div>
           <div class="field">
             <label>Shirt Size <span class="req">*</span></label>
@@ -943,7 +943,7 @@ footer p{font-size:.65rem;color:var(--muted);letter-spacing:.1em}
   <p>
     Registration: <strong>$30/player</strong> · 3-Point Contest: <strong>$10</strong><br>
     Pay in cash on game day or via <span class="venmo">Venmo @newbie015</span><br>
-    <span style="font-size:.7rem;color:var(--muted);margin-top:.3rem;display:inline-block">3-Point Contest fee must be paid by Feb 28 via cash or Venmo</span>
+    <span style="font-size:.7rem;color:var(--muted);margin-top:.3rem;display:inline-block">3-Point Contest fee can be paid in cash on game day or via Venmo</span>
   </p>
 </div>
 
@@ -1254,7 +1254,7 @@ footer p{font-size:.65rem;color:var(--muted);letter-spacing:.1em}
    COUNTDOWN TIMER — Registration deadline Feb 28
    ============================================================ */
 (function(){
-  const deadline = new Date('2026-02-28T23:59:59-05:00').getTime();
+  const tipoff = new Date('2026-03-21T11:00:00-04:00').getTime();
   const els = {
     days: document.getElementById('cdDays'),
     hours: document.getElementById('cdHours'),
@@ -1265,10 +1265,10 @@ footer p{font-size:.65rem;color:var(--muted);letter-spacing:.1em}
 
   function tick(){
     const now = Date.now();
-    const diff = deadline - now;
+    const diff = tipoff - now;
 
     if(diff <= 0){
-      container.innerHTML = '<div style="color:var(--error);font-size:.8rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase">Registration Closed</div>';
+      container.innerHTML = '<div style="color:var(--fire);font-size:.8rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase">Game Day — Let\'s Go! 🏀</div>';
       return;
     }
 
