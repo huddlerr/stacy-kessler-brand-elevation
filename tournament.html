@@ -580,6 +580,7 @@ footer p{font-size:.65rem;color:var(--muted);letter-spacing:.1em}
   .info-strip{grid-template-columns:1fr 1fr}
   .step-label{display:none}
 }
+.in{opacity:1!important;transform:translateY(0)!important}
 </style>
 </head>
 <body>
@@ -894,11 +895,12 @@ footer p{font-size:.65rem;color:var(--muted);letter-spacing:.1em}
   const totalSteps = panels.length;
 
   function goTo(n){
-    if(n < 0 || n > totalSteps) return;
+    if(n < 0 || n >= totalSteps) return;
     // Animate out
-    panels[current].classList.remove('active');
-    panels[current].classList.add('exit-left');
-    setTimeout(()=>{panels[current].classList.remove('exit-left')},500);
+    const leaving = current;
+    panels[leaving].classList.remove('active');
+    panels[leaving].classList.add('exit-left');
+    setTimeout(()=>{panels[leaving].classList.remove('exit-left')},500);
 
     current = n;
 
@@ -989,23 +991,17 @@ footer p{font-size:.65rem;color:var(--muted);letter-spacing:.1em}
     });
   });
 
-  // Clear error on input
-  form.addEventListener('input', (e) => {
+  // Clear error on input/change
+  function clearFieldError(e){
     const field = e.target.closest('.field');
     if(field){
       field.classList.remove('error');
       const err = field.querySelector('.field-error');
       if(err) err.remove();
     }
-  });
-  form.addEventListener('change', (e) => {
-    const field = e.target.closest('.field');
-    if(field){
-      field.classList.remove('error');
-      const err = field.querySelector('.field-error');
-      if(err) err.remove();
-    }
-  });
+  }
+  form.addEventListener('input', clearFieldError);
+  form.addEventListener('change', clearFieldError);
 
   /* ---- SUBMIT TO AIRTABLE ---- */
   async function submitForm(){
@@ -1056,8 +1052,10 @@ footer p{font-size:.65rem;color:var(--muted);letter-spacing:.1em}
       showSuccess();
     } catch(err){
       console.error(err);
-      // Graceful fallback — still show success for demo
-      showSuccess();
+      btnNext.textContent = 'Submit Registration →';
+      btnNext.style.pointerEvents = '';
+      btnNext.style.opacity = '';
+      alert('Registration failed — please try again or contact ajobrien03@gmail.com');
     }
   }
 
@@ -1147,9 +1145,8 @@ footer p{font-size:.65rem;color:var(--muted);letter-spacing:.1em}
 
   function showPreview(file){
     if(file.size > 10*1024*1024){ alert('File too large. Max 10 MB.'); return; }
-    const reader = new FileReader();
-    reader.onload = e => { previewImg.src = e.target.result; };
-    reader.readAsDataURL(file);
+    if(previewImg.src.startsWith('blob:')) URL.revokeObjectURL(previewImg.src);
+    previewImg.src = URL.createObjectURL(file);
     fileName.textContent = file.name;
     fileSize.textContent = (file.size/1024/1024).toFixed(1) + ' MB';
     zone.style.display = 'none';
@@ -1157,6 +1154,8 @@ footer p{font-size:.65rem;color:var(--muted);letter-spacing:.1em}
   }
 
   removeBtn.addEventListener('click', () => {
+    if(previewImg.src.startsWith('blob:')) URL.revokeObjectURL(previewImg.src);
+    previewImg.src = '';
     input.value = '';
     preview.classList.remove('show');
     zone.style.display = '';
@@ -1169,7 +1168,7 @@ footer p{font-size:.65rem;color:var(--muted);letter-spacing:.1em}
 (function(){
   const obs = new IntersectionObserver((entries) => {
     entries.forEach(e => {
-      if(e.isIntersecting) e.target.classList.add('in');
+      if(e.isIntersecting){ e.target.classList.add('in'); obs.unobserve(e.target); }
     });
   }, {threshold: 0.1});
   document.querySelectorAll('.form-header, .info-strip, .payment-bar').forEach(el => {
@@ -1178,50 +1177,8 @@ footer p{font-size:.65rem;color:var(--muted);letter-spacing:.1em}
     el.style.transition = 'opacity .8s var(--ease-out), transform .8s var(--ease-out)';
     obs.observe(el);
   });
-  // "in" class styles
-  const style = document.createElement('style');
-  style.textContent = '.in{opacity:1!important;transform:translateY(0)!important}';
-  document.head.appendChild(style);
 })();
 
-/* ============================================================
-   FLOATING BASKETBALL PARTICLES
-   ============================================================ */
-(function(){
-  const canvas = document.getElementById('courtCanvas');
-  const ctx = canvas.getContext('2d');
-  const balls = [];
-  const count = 8;
-  for(let i=0;i<count;i++){
-    balls.push({
-      x: Math.random()*window.innerWidth,
-      y: Math.random()*window.innerHeight,
-      r: Math.random()*3+1.5,
-      vx: (Math.random()-.5)*.3,
-      vy: (Math.random()-.5)*.3,
-      alpha: Math.random()*.15+.05
-    });
-  }
-  function animateBalls(){
-    // Don't clear — the court lines stay
-    // Draw balls on top
-    balls.forEach(b=>{
-      b.x += b.vx;
-      b.y += b.vy;
-      if(b.x < 0) b.x = window.innerWidth;
-      if(b.x > window.innerWidth) b.x = 0;
-      if(b.y < 0) b.y = window.innerHeight;
-      if(b.y > window.innerHeight) b.y = 0;
-      ctx.beginPath();
-      ctx.arc(b.x, b.y, b.r, 0, Math.PI*2);
-      ctx.fillStyle = `rgba(255,107,53,${b.alpha})`;
-      ctx.fill();
-    });
-    requestAnimationFrame(animateBalls);
-  }
-  // Don't run the floating balls — let court lines be static
-  // animateBalls();
-})();
 </script>
 </body>
 </html>
