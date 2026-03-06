@@ -1,5 +1,7 @@
 require('dotenv').config();
 const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
 const Airtable = require('airtable');
 const multer = require('multer');
 const cors = require('cors');
@@ -7,6 +9,8 @@ const path = require('path');
 const { RateLimiterMemory } = require('rate-limiter-flexible');
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
 const PORT = process.env.PORT || 3000;
 
 // --- Middleware ---
@@ -159,10 +163,108 @@ app.get('/tournament', (req, res) => {
   res.sendFile(path.join(__dirname, 'tournament.html'));
 });
 
-app.listen(PORT, () => {
-  console.log(`\n  🏀 AVL Hoops Tournament Server`);
+app.get('/travel', (req, res) => {
+  res.sendFile(path.join(__dirname, 'travel.html'));
+});
+
+// ============================================================
+// Socket.IO — TravlTeam Real-Time Collaboration
+// ============================================================
+const trips = new Map(); // tripId -> { pins: [], cursors: {}, users: {} }
+
+function getTrip(tripId) {
+  if (!trips.has(tripId)) {
+    trips.set(tripId, { pins: [], cursors: {}, users: {} });
+  }
+  return trips.get(tripId);
+}
+
+io.on('connection', (socket) => {
+  let currentTrip = null;
+  let userName = null;
+
+  socket.on('join-trip', ({ tripId, name, color }) => {
+    currentTrip = tripId;
+    userName = name;
+    socket.join(tripId);
+
+    const trip = getTrip(tripId);
+    trip.users[socket.id] = { name, color, id: socket.id };
+
+    // Send existing state to the new user
+    socket.emit('trip-state', {
+      pins: trip.pins,
+      users: Object.values(trip.users),
+    });
+
+    // Notify others
+    socket.to(tripId).emit('user-joined', trip.users[socket.id]);
+    io.to(tripId).emit('users-update', Object.values(trip.users));
+  });
+
+  socket.on('add-pin', (pin) => {
+    if (!currentTrip) return;
+    const trip = getTrip(currentTrip);
+    const newPin = { ...pin, id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), author: userName };
+    trip.pins.push(newPin);
+    io.to(currentTrip).emit('pin-added', newPin);
+  });
+
+  socket.on('vote-pin', ({ pinId, emoji }) => {
+    if (!currentTrip) return;
+    const trip = getTrip(currentTrip);
+    const pin = trip.pins.find(p => p.id === pinId);
+    if (pin) {
+      if (!pin.votes) pin.votes = {};
+      if (!pin.votes[emoji]) pin.votes[emoji] = [];
+      const idx = pin.votes[emoji].indexOf(userName);
+      if (idx > -1) pin.votes[emoji].splice(idx, 1);
+      else pin.votes[emoji].push(userName);
+      io.to(currentTrip).emit('pin-updated', pin);
+    }
+  });
+
+  socket.on('delete-pin', ({ pinId }) => {
+    if (!currentTrip) return;
+    const trip = getTrip(currentTrip);
+    trip.pins = trip.pins.filter(p => p.id !== pinId);
+    io.to(currentTrip).emit('pin-deleted', { pinId });
+  });
+
+  socket.on('cursor-move', (pos) => {
+    if (!currentTrip) return;
+    socket.to(currentTrip).emit('cursor-update', {
+      id: socket.id,
+      name: userName,
+      ...pos,
+    });
+  });
+
+  socket.on('chat-message', (msg) => {
+    if (!currentTrip) return;
+    io.to(currentTrip).emit('chat-message', {
+      author: userName,
+      text: msg.text,
+      time: new Date().toISOString(),
+    });
+  });
+
+  socket.on('disconnect', () => {
+    if (currentTrip) {
+      const trip = getTrip(currentTrip);
+      delete trip.users[socket.id];
+      delete trip.cursors[socket.id];
+      io.to(currentTrip).emit('users-update', Object.values(trip.users));
+      io.to(currentTrip).emit('cursor-remove', { id: socket.id });
+    }
+  });
+});
+
+server.listen(PORT, () => {
+  console.log(`\n  🏀 AVL Hoops + TravlTeam Server`);
   console.log(`  ──────────────────────────────`);
-  console.log(`  Local:    http://localhost:${PORT}/tournament`);
-  console.log(`  API:      http://localhost:${PORT}/api/health`);
-  console.log(`  Airtable: ${process.env.AIRTABLE_PAT ? '✓ configured' : '✗ set AIRTABLE_PAT in .env'}\n`);
+  console.log(`  Tournament: http://localhost:${PORT}/tournament`);
+  console.log(`  TravlTeam:  http://localhost:${PORT}/travel`);
+  console.log(`  API:        http://localhost:${PORT}/api/health`);
+  console.log(`  Airtable:   ${process.env.AIRTABLE_PAT ? '✓ configured' : '✗ set AIRTABLE_PAT in .env'}\n`);
 });
