@@ -260,7 +260,7 @@ io.on('connection', (socket) => {
   });
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`\n  🏀 AVL Hoops + TravlTeam Server`);
   console.log(`  ──────────────────────────────`);
   console.log(`  Tournament: http://localhost:${PORT}/tournament`);
