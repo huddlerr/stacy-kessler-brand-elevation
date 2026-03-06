@@ -35,10 +35,13 @@ const upload = multer({
 });
 
 // --- Airtable Setup ---
-const base = new Airtable({ apiKey: process.env.AIRTABLE_PAT }).base(
-  process.env.AIRTABLE_BASE_ID
-);
-const table = base(process.env.AIRTABLE_TABLE_NAME || 'Tournament Registrations');
+let base, table;
+if (process.env.AIRTABLE_PAT && process.env.AIRTABLE_BASE_ID) {
+  base = new Airtable({ apiKey: process.env.AIRTABLE_PAT }).base(
+    process.env.AIRTABLE_BASE_ID
+  );
+  table = base(process.env.AIRTABLE_TABLE_NAME || 'Tournament Registrations');
+}
 
 // --- Validation ---
 function validateRegistration(body) {
@@ -69,6 +72,10 @@ function validateRegistration(body) {
 // POST /api/register — Create registration in Airtable
 // ============================================================
 app.post('/api/register', upload.single('photo'), async (req, res) => {
+  if (!table) {
+    return res.status(503).json({ error: 'Airtable is not configured. Set AIRTABLE_PAT and AIRTABLE_BASE_ID.' });
+  }
+
   try {
     // Rate limit
     await rateLimiter.consume(req.ip);
@@ -124,6 +131,9 @@ app.post('/api/register', upload.single('photo'), async (req, res) => {
 // GET /api/spots — Check remaining spots (8 teams max)
 // ============================================================
 app.get('/api/spots', async (req, res) => {
+  if (!table) {
+    return res.json({ registered: 0, remaining: 64, total: 64 });
+  }
   try {
     const records = await table.select({
       fields: ['Name'],
