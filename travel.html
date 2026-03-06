@@ -4,6 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>TravlTeam — Plan Together, Go Together</title>
+<!-- PWA -->
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#00D4AA">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TravlTeam">
+<!-- Open Graph for link previews -->
+<meta property="og:title" content="Join my trip on TravlTeam">
+<meta property="og:description" content="Plan Together, Go Together — Drop pins, vote on places, chat in real-time">
+<meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Outfit:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -479,21 +489,7 @@ textarea.pm-field { resize:vertical;min-height:80px }
 .mob-tab span { font-size:.55rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase }
 .mob-tab.active { color:var(--teal) }
 
-.mobile-sheet {
-  display:none;
-  position:fixed;bottom:60px;left:0;right:0;
-  max-height:50vh;
-  background:var(--surface);
-  border-top:1px solid var(--border);
-  border-radius:var(--radius-lg) var(--radius-lg) 0 0;
-  z-index:40;
-  overflow-y:auto;
-  transition:transform .3s var(--ease-out);
-}
-.mobile-sheet .sheet-handle {
-  width:36px;height:4px;background:var(--surface-3);
-  border-radius:2px;margin:8px auto;
-}
+/* old mobile-sheet rules moved above with enhanced version */
 
 /* ---- Share Link Bar ---- */
 .share-bar {
@@ -520,13 +516,18 @@ textarea.pm-field { resize:vertical;min-height:80px }
   .sidebar { display:none }
   .mobile-nav { display:block }
   .map-toolbar {
-    top:auto;bottom:80px;
+    top:1rem;bottom:auto;
     transform:translateX(-50%);
+    padding:.3rem;gap:.3rem;
   }
-  .share-bar { bottom:80px;right:.5rem }
+  .map-tool { width:36px;height:36px;font-size:1rem }
+  .share-bar { bottom:70px;right:.5rem }
+  .share-btn { padding:.5rem .9rem;font-size:.7rem }
   #app.active { flex-direction:column }
   .map-area { height:100vh }
-  .mobile-sheet.open { display:block }
+  .pin-modal { padding:1.5rem;width:94% }
+  /* Taller safe area for bottom nav */
+  .mobile-nav { padding-bottom:env(safe-area-inset-bottom,.5rem) }
 }
 
 /* ---- Simulated Map Tiles ---- */
@@ -575,6 +576,152 @@ textarea.pm-field { resize:vertical;min-height:80px }
   position:absolute;
   font-size:.55rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;
   color:rgba(255,255,255,.12);
+}
+
+/* ---- Install Banner (PWA) ---- */
+.install-banner {
+  position:fixed;bottom:0;left:0;right:0;
+  background:linear-gradient(135deg,var(--surface) 0%,var(--surface-2) 100%);
+  border-top:1px solid var(--teal-dim);
+  padding:1rem 1.2rem;
+  display:flex;align-items:center;gap:1rem;
+  z-index:9000;
+  transform:translateY(100%);
+  transition:transform .4s var(--ease-out);
+}
+.install-banner.show { transform:translateY(0) }
+.install-banner-icon {
+  width:48px;height:48px;border-radius:12px;
+  background:var(--teal-glow);border:1px solid var(--teal-dim);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem;flex-shrink:0;
+}
+.install-banner-text { flex:1 }
+.install-banner-title { font-weight:600;font-size:.9rem }
+.install-banner-sub { font-size:.75rem;color:var(--ivory-dim) }
+.install-banner-btn {
+  padding:.6rem 1.2rem;border-radius:100px;
+  background:var(--teal);color:var(--ink);
+  font-weight:700;font-size:.8rem;
+  white-space:nowrap;
+}
+.install-banner-close {
+  font-size:1.2rem;color:var(--muted);padding:.5rem;
+}
+
+/* ---- Mobile Bottom Sheet (draggable) ---- */
+.mobile-sheet {
+  display:none;
+  position:fixed;left:0;right:0;bottom:56px;
+  background:var(--surface);
+  border-top:1px solid var(--border);
+  border-radius:var(--radius-lg) var(--radius-lg) 0 0;
+  z-index:40;
+  transition:transform .3s var(--ease-out), max-height .3s var(--ease-out);
+  overflow:hidden;
+  max-height:0;
+}
+.mobile-sheet.open {
+  display:block;
+  max-height:55vh;
+}
+.mobile-sheet.full {
+  max-height:85vh;
+}
+.sheet-handle-area {
+  padding:8px 0 4px;cursor:grab;touch-action:none;
+}
+.mobile-sheet .sheet-handle {
+  width:36px;height:4px;background:var(--surface-3);
+  border-radius:2px;margin:0 auto;
+}
+.mobile-sheet-inner {
+  overflow-y:auto;max-height:calc(55vh - 20px);
+  padding:0 1rem 1rem;
+  -webkit-overflow-scrolling:touch;
+}
+.mobile-sheet.full .mobile-sheet-inner {
+  max-height:calc(85vh - 20px);
+}
+
+/* ---- Mobile Share Action Sheet ---- */
+.share-sheet {
+  position:fixed;inset:0;z-index:800;
+  background:rgba(0,0,0,.5);backdrop-filter:blur(4px);
+  display:none;align-items:flex-end;justify-content:center;
+}
+.share-sheet.show { display:flex }
+.share-sheet-card {
+  background:var(--surface);
+  border-radius:var(--radius-lg) var(--radius-lg) 0 0;
+  width:100%;max-width:500px;
+  padding:1.5rem;
+  padding-bottom:calc(1.5rem + env(safe-area-inset-bottom, 0px));
+  animation:slideUp .3s var(--ease-out);
+}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.share-sheet-title {
+  font-family:var(--serif);font-size:1.3rem;margin-bottom:.3rem;
+}
+.share-sheet-code {
+  font-size:.75rem;color:var(--teal);font-weight:600;
+  letter-spacing:.1em;margin-bottom:1.2rem;
+}
+.share-sheet-options {
+  display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem;
+  margin-bottom:1.2rem;
+}
+.share-opt {
+  display:flex;flex-direction:column;align-items:center;gap:.4rem;
+  padding:.8rem .4rem;border-radius:var(--radius);
+  transition:background .15s;
+}
+.share-opt:hover { background:var(--surface-2) }
+.share-opt-icon {
+  width:48px;height:48px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;
+}
+.share-opt-label { font-size:.65rem;font-weight:600;color:var(--ivory-dim) }
+.share-opt.copy .share-opt-icon { background:var(--teal-glow);color:var(--teal) }
+.share-opt.text .share-opt-icon { background:rgba(74,222,128,.12);color:#4ADE80 }
+.share-opt.qr .share-opt-icon { background:rgba(167,139,250,.12);color:var(--violet) }
+.share-opt.more .share-opt-icon { background:rgba(255,255,255,.06);color:var(--ivory-dim) }
+.share-sheet-link {
+  width:100%;padding:.8rem 1rem;
+  background:var(--surface-2);border:1px solid var(--border-2);
+  border-radius:var(--radius-sm);
+  font-size:.78rem;color:var(--ivory-dim);font-family:var(--sans);
+  word-break:break-all;text-align:center;
+  margin-bottom:1rem;
+}
+.share-sheet-cancel {
+  width:100%;padding:.9rem;
+  background:var(--surface-2);border-radius:var(--radius-sm);
+  font-weight:600;font-size:.9rem;text-align:center;
+}
+
+/* ---- QR Code Modal ---- */
+.qr-modal {
+  position:fixed;inset:0;z-index:900;
+  background:rgba(0,0,0,.7);backdrop-filter:blur(8px);
+  display:none;align-items:center;justify-content:center;
+}
+.qr-modal.show { display:flex }
+.qr-card {
+  background:white;border-radius:var(--radius-lg);
+  padding:2rem;text-align:center;max-width:300px;width:85%;
+}
+.qr-canvas { width:200px;height:200px;margin:0 auto 1rem;background:#eee;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+}
+.qr-canvas-placeholder {
+  font-size:.7rem;color:#666;padding:1rem;line-height:1.4;
+}
+.qr-trip-name { font-size:.8rem;color:#333;font-weight:600;margin-bottom:1rem }
+.qr-close {
+  padding:.6rem 2rem;background:var(--ink);color:white;
+  border-radius:100px;font-weight:600;font-size:.85rem;
 }
 
 /* ---- Google Maps API hint ---- */
@@ -811,10 +958,62 @@ textarea.pm-field { resize:vertical;min-height:80px }
   </div>
 </div>
 
-<!-- Mobile Sheet -->
+<!-- Mobile Sheet (draggable) -->
 <div class="mobile-sheet" id="mobileSheet">
-  <div class="sheet-handle"></div>
-  <div class="mobile-sheet-content" id="mobileSheetContent"></div>
+  <div class="sheet-handle-area" id="sheetHandle">
+    <div class="sheet-handle"></div>
+  </div>
+  <div class="mobile-sheet-inner" id="mobileSheetContent"></div>
+</div>
+
+<!-- Share Action Sheet (mobile-native feel) -->
+<div class="share-sheet" id="shareSheet">
+  <div class="share-sheet-card">
+    <div class="share-sheet-title">Share this trip</div>
+    <div class="share-sheet-code" id="shareSheetCode">—</div>
+    <div class="share-sheet-options">
+      <button class="share-opt copy" id="shareCopy">
+        <div class="share-opt-icon">&#128279;</div>
+        <div class="share-opt-label">Copy Link</div>
+      </button>
+      <button class="share-opt text" id="shareNative">
+        <div class="share-opt-icon">&#128228;</div>
+        <div class="share-opt-label">Share</div>
+      </button>
+      <button class="share-opt qr" id="shareQR">
+        <div class="share-opt-icon">&#9641;</div>
+        <div class="share-opt-label">QR Code</div>
+      </button>
+      <button class="share-opt more" id="shareMore">
+        <div class="share-opt-icon">&#8943;</div>
+        <div class="share-opt-label">More</div>
+      </button>
+    </div>
+    <div class="share-sheet-link" id="shareSheetLink">—</div>
+    <button class="share-sheet-cancel" id="shareSheetCancel">Cancel</button>
+  </div>
+</div>
+
+<!-- QR Code Modal -->
+<div class="qr-modal" id="qrModal">
+  <div class="qr-card">
+    <div class="qr-canvas" id="qrCanvas">
+      <div class="qr-canvas-placeholder">Point your friend's camera here to join the trip</div>
+    </div>
+    <div class="qr-trip-name" id="qrTripName">—</div>
+    <button class="qr-close" id="qrClose">Done</button>
+  </div>
+</div>
+
+<!-- Install to Home Screen Banner -->
+<div class="install-banner" id="installBanner">
+  <div class="install-banner-icon">&#127758;</div>
+  <div class="install-banner-text">
+    <div class="install-banner-title">Add TravlTeam</div>
+    <div class="install-banner-sub">Install for the full app experience</div>
+  </div>
+  <button class="install-banner-btn" id="installBtn">Install</button>
+  <button class="install-banner-close" id="installClose">&#10005;</button>
 </div>
 
 <!-- ============================================================
@@ -1156,15 +1355,109 @@ textarea.pm-field { resize:vertical;min-height:80px }
     el.style.top = data.y + '%';
   }
 
-  // --- Share ---
+  // --- Share (mobile-native + desktop) ---
+  const shareSheet = document.getElementById('shareSheet');
+  const shareSheetCode = document.getElementById('shareSheetCode');
+  const shareSheetLink = document.getElementById('shareSheetLink');
+  const qrModal = document.getElementById('qrModal');
+
+  function getTripUrl() {
+    return location.origin + '/travel?trip=' + encodeURIComponent(tripId);
+  }
+
   shareBtn.addEventListener('click', () => {
-    const url = location.origin + '/travel?trip=' + encodeURIComponent(tripId);
-    navigator.clipboard.writeText(url).then(() => {
-      showToast('&#128279;', 'Trip link copied!');
-    }).catch(() => {
-      showToast('&#128279;', url);
+    const url = getTripUrl();
+    // On mobile, show the share action sheet
+    if (window.innerWidth <= 768) {
+      shareSheetCode.textContent = tripId;
+      shareSheetLink.textContent = url;
+      shareSheet.classList.add('show');
+    } else {
+      // Desktop: just copy
+      navigator.clipboard.writeText(url).then(() => {
+        showToast('&#128279;', 'Trip link copied!');
+      });
+    }
+  });
+
+  // Share sheet actions
+  document.getElementById('shareCopy').addEventListener('click', () => {
+    navigator.clipboard.writeText(getTripUrl()).then(() => {
+      showToast('&#128279;', 'Link copied!');
+      shareSheet.classList.remove('show');
     });
   });
+
+  document.getElementById('shareNative').addEventListener('click', () => {
+    if (navigator.share) {
+      navigator.share({
+        title: 'Join my trip on TravlTeam',
+        text: 'Plan our trip together! Tap to join: ' + tripId,
+        url: getTripUrl(),
+      }).then(() => {
+        shareSheet.classList.remove('show');
+      }).catch(() => {});
+    } else {
+      // Fallback: copy
+      navigator.clipboard.writeText(getTripUrl());
+      showToast('&#128228;', 'Link copied (share not supported on this browser)');
+      shareSheet.classList.remove('show');
+    }
+  });
+
+  document.getElementById('shareQR').addEventListener('click', () => {
+    shareSheet.classList.remove('show');
+    document.getElementById('qrTripName').textContent = tripId;
+    // Generate a simple QR-like visual (real QR would use a library)
+    const canvas = document.getElementById('qrCanvas');
+    canvas.innerHTML = generateSimpleQR(getTripUrl());
+    qrModal.classList.add('show');
+  });
+
+  document.getElementById('shareMore').addEventListener('click', () => {
+    // Trigger native share if available, otherwise copy
+    if (navigator.share) {
+      document.getElementById('shareNative').click();
+    } else {
+      document.getElementById('shareCopy').click();
+    }
+  });
+
+  document.getElementById('shareSheetCancel').addEventListener('click', () => {
+    shareSheet.classList.remove('show');
+  });
+
+  document.getElementById('qrClose').addEventListener('click', () => {
+    qrModal.classList.remove('show');
+  });
+
+  // Close share sheet on backdrop tap
+  shareSheet.addEventListener('click', (e) => {
+    if (e.target === shareSheet) shareSheet.classList.remove('show');
+  });
+
+  // Simple QR placeholder (grid pattern that looks like QR)
+  function generateSimpleQR(url) {
+    const size = 9;
+    let html = '<div style="display:inline-grid;grid-template-columns:repeat('+size+',18px);gap:2px;padding:12px">';
+    // Seed from URL for consistent pattern
+    let seed = 0;
+    for (let i = 0; i < url.length; i++) seed = ((seed << 5) - seed) + url.charCodeAt(i);
+    for (let r = 0; r < size; r++) {
+      for (let c = 0; c < size; c++) {
+        // Corner squares (QR finder patterns)
+        const isCorner = (r < 3 && c < 3) || (r < 3 && c >= size-3) || (r >= size-3 && c < 3);
+        const isBorder = isCorner && (r === 0 || r === 2 || c === 0 || c === 2 || r === size-1 || r === size-3 || c === size-1 || c === size-3);
+        const isCenter = (r === 1 && c === 1) || (r === 1 && c === size-2) || (r === size-2 && c === 1);
+        let fill = false;
+        if (isCorner) fill = isBorder || isCenter;
+        else fill = ((seed >> ((r * size + c) % 30)) & 1) === 1;
+        html += '<div style="width:18px;height:18px;border-radius:3px;background:'+(fill?'#111':'#e0e0e0')+'"></div>';
+      }
+    }
+    html += '</div>';
+    return html;
+  }
 
   // --- Mobile Nav ---
   document.querySelectorAll('.mob-tab').forEach(tab => {
@@ -1174,28 +1467,124 @@ textarea.pm-field { resize:vertical;min-height:80px }
       const target = tab.dataset.mob;
 
       if (target === 'map') {
-        mobileSheet.classList.remove('open');
+        mobileSheet.classList.remove('open','full');
         return;
       }
 
-      // Clone content into mobile sheet
       mobileSheet.classList.add('open');
+      mobileSheet.classList.remove('full');
       mobileSheetContent.innerHTML = '';
 
       if (target === 'pins') {
         mobileSheetContent.innerHTML = pinsList.innerHTML;
       } else if (target === 'chat') {
-        const chatClone = document.getElementById('chatPane').cloneNode(true);
-        chatClone.style.display = 'flex';
-        chatClone.style.height = '40vh';
-        mobileSheetContent.appendChild(chatClone);
+        // Build a working chat inside the sheet
+        const wrap = document.createElement('div');
+        wrap.style.cssText = 'display:flex;flex-direction:column;height:45vh';
+        const msgs = document.createElement('div');
+        msgs.style.cssText = 'flex:1;overflow-y:auto;padding:.5rem';
+        msgs.id = 'mobileChatMsgs';
+        // Copy existing messages
+        chatMessages.querySelectorAll('.chat-msg').forEach(m => msgs.appendChild(m.cloneNode(true)));
+        const inputWrap = document.createElement('div');
+        inputWrap.className = 'chat-input-wrap';
+        inputWrap.innerHTML = '<input class="chat-input" id="mobileChatInput" placeholder="Type a message..."><button class="chat-send" id="mobileChatSend">&#8593;</button>';
+        wrap.appendChild(msgs);
+        wrap.appendChild(inputWrap);
+        mobileSheetContent.appendChild(wrap);
+        mobileSheet.classList.add('full');
+        // Wire up mobile chat
+        setTimeout(() => {
+          const mInput = document.getElementById('mobileChatInput');
+          const mSend = document.getElementById('mobileChatSend');
+          const mMsgs = document.getElementById('mobileChatMsgs');
+          function mobileSend() {
+            const text = mInput.value.trim();
+            if (!text) return;
+            socket.emit('chat-message', { text });
+            mInput.value = '';
+          }
+          mSend.addEventListener('click', mobileSend);
+          mInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') mobileSend() });
+          // Listen for new messages in mobile view
+          socket.on('chat-message', (msg) => {
+            const div = document.createElement('div');
+            div.className = 'chat-msg';
+            const time = new Date(msg.time);
+            div.innerHTML = '<div class="chat-msg-author" style="color:'+(msg.author===myName?'var(--teal)':'var(--amber)')+'">'+escapeHtml(msg.author)+'</div><div class="chat-msg-text">'+escapeHtml(msg.text)+'</div><div class="chat-msg-time">'+time.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+'</div>';
+            mMsgs.appendChild(div);
+            mMsgs.scrollTop = mMsgs.scrollHeight;
+          });
+        }, 50);
       } else if (target === 'itinerary') {
         mobileSheetContent.innerHTML = document.getElementById('itinPane').innerHTML;
       } else if (target === 'team') {
-        mobileSheetContent.innerHTML = usersBar.innerHTML;
+        const teamHtml = '<div style="padding:.5rem"><div class="sb-users-label" style="margin-bottom:.8rem">Your Travel Crew</div>' +
+          Array.from(usersBar.querySelectorAll('.user-avatar')).map(a =>
+            '<div style="display:flex;align-items:center;gap:.8rem;padding:.6rem;background:var(--surface-2);border-radius:var(--radius-sm);margin-bottom:.4rem">' +
+            '<div class="user-avatar" style="background:'+a.style.background+'">'+a.textContent.charAt(0)+'</div>' +
+            '<div style="font-weight:500">'+a.title+'</div>' +
+            '<div style="margin-left:auto;font-size:.6rem;color:var(--teal);font-weight:600;letter-spacing:.1em">ONLINE</div></div>'
+          ).join('') + '</div>';
+        mobileSheetContent.innerHTML = teamHtml;
       }
     });
   });
+
+  // --- Draggable Sheet Handle ---
+  const sheetHandle = document.getElementById('sheetHandle');
+  let sheetDragging = false;
+  let sheetStartY = 0;
+  sheetHandle.addEventListener('touchstart', (e) => {
+    sheetDragging = true;
+    sheetStartY = e.touches[0].clientY;
+  }, { passive: true });
+  document.addEventListener('touchmove', (e) => {
+    if (!sheetDragging) return;
+    const dy = e.touches[0].clientY - sheetStartY;
+    if (dy > 60) {
+      // Swipe down — collapse
+      mobileSheet.classList.remove('open','full');
+      document.querySelectorAll('.mob-tab').forEach(t => t.classList.remove('active'));
+      document.querySelector('.mob-tab[data-mob="map"]').classList.add('active');
+      sheetDragging = false;
+    } else if (dy < -60) {
+      // Swipe up — expand full
+      mobileSheet.classList.add('full');
+      sheetDragging = false;
+    }
+  }, { passive: true });
+  document.addEventListener('touchend', () => { sheetDragging = false }, { passive: true });
+
+  // --- PWA Install ---
+  let deferredPrompt = null;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    // Show install banner after 3 seconds
+    setTimeout(() => {
+      document.getElementById('installBanner').classList.add('show');
+    }, 3000);
+  });
+
+  document.getElementById('installBtn').addEventListener('click', () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(() => {
+        deferredPrompt = null;
+        document.getElementById('installBanner').classList.remove('show');
+      });
+    }
+  });
+
+  document.getElementById('installClose').addEventListener('click', () => {
+    document.getElementById('installBanner').classList.remove('show');
+  });
+
+  // Register Service Worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  }
 
   // Auto-join from URL params
   const params = new URLSearchParams(location.search);
