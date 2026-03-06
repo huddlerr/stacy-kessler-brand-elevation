@@ -1,0 +1,1613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>TravlTeam — Plan Together, Go Together</title>
+<!-- PWA -->
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#00D4AA">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TravlTeam">
+<!-- Open Graph for link previews -->
+<meta property="og:title" content="Join my trip on TravlTeam">
+<meta property="og:description" content="Plan Together, Go Together — Drop pins, vote on places, chat in real-time">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Outfit:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   TRAVLTEAM — Collaborative Travel Map Prototype
+   Premium dark UI matching Stacy Kessler brand system
+   ============================================================ */
+:root {
+  --teal:       #00D4AA;
+  --teal-light: #33FFCC;
+  --teal-dim:   #009977;
+  --teal-glow:  rgba(0,212,170,0.12);
+  --coral:      #FF6B6B;
+  --amber:      #FFB347;
+  --violet:     #A78BFA;
+  --sky:        #60A5FA;
+  --ink:        #0A0B0F;
+  --ink-warm:   #101118;
+  --surface:    #151620;
+  --surface-2:  #1C1D2B;
+  --surface-3:  #252638;
+  --border:     rgba(255,255,255,0.06);
+  --border-2:   rgba(255,255,255,0.1);
+  --ivory:      #F0EDE8;
+  --ivory-dim:  #9994A0;
+  --muted:      #6B6580;
+  --serif:      'Cormorant Garamond', Georgia, serif;
+  --sans:       'Outfit', system-ui, sans-serif;
+  --ease:       cubic-bezier(0.25,0.46,0.45,0.94);
+  --ease-out:   cubic-bezier(0.16,1,0.3,1);
+  --radius:     14px;
+  --radius-sm:  8px;
+  --radius-lg:  20px;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{overflow:hidden;height:100%}
+body{background:var(--ink);color:var(--ivory);font-family:var(--sans);font-weight:300;height:100%;overflow:hidden}
+h1,h2,h3{font-family:var(--serif);font-weight:300}
+button{font-family:var(--sans);cursor:pointer;border:none;background:none;color:inherit}
+
+/* Grain */
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");pointer-events:none;z-index:99999;opacity:.4}
+
+/* ============================================================
+   LANDING / JOIN SCREEN
+   ============================================================ */
+#joinScreen {
+  position:fixed;inset:0;z-index:1000;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--ink);
+}
+#joinScreen.hidden { display:none }
+
+.join-card {
+  background:var(--surface);
+  border:1px solid var(--border-2);
+  border-radius:var(--radius-lg);
+  padding:3rem 2.5rem;
+  max-width:400px;
+  width:90%;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.join-card::before {
+  content:'';position:absolute;top:-60%;left:50%;transform:translateX(-50%);
+  width:500px;height:500px;
+  background:radial-gradient(circle,var(--teal-glow) 0%,transparent 70%);
+  pointer-events:none;
+}
+.join-logo {
+  font-family:var(--serif);font-size:2.8rem;font-weight:300;
+  letter-spacing:.05em;margin-bottom:.25rem;position:relative;
+}
+.join-logo span { color:var(--teal) }
+.join-sub {
+  font-size:.7rem;font-weight:500;letter-spacing:.25em;text-transform:uppercase;
+  color:var(--ivory-dim);margin-bottom:2.5rem;
+}
+.join-field {
+  width:100%;padding:.9rem 1.2rem;
+  background:var(--surface-2);border:1px solid var(--border-2);
+  border-radius:var(--radius-sm);color:var(--ivory);
+  font-family:var(--sans);font-size:.95rem;font-weight:300;
+  outline:none;transition:border-color .2s;
+  margin-bottom:1rem;
+}
+.join-field:focus { border-color:var(--teal) }
+.join-field::placeholder { color:var(--muted) }
+.join-btn {
+  width:100%;padding:1rem;
+  background:var(--teal);color:var(--ink);
+  font-weight:600;font-size:.9rem;letter-spacing:.08em;
+  border-radius:var(--radius-sm);
+  transition:all .2s var(--ease);
+  margin-top:.5rem;
+}
+.join-btn:hover { background:var(--teal-light);transform:translateY(-1px) }
+.join-or {
+  font-size:.7rem;color:var(--muted);margin:1.2rem 0;
+  letter-spacing:.15em;text-transform:uppercase;
+}
+.join-create {
+  font-size:.85rem;color:var(--teal);font-weight:500;
+  text-decoration:underline;text-underline-offset:3px;
+}
+
+/* ============================================================
+   MAIN APP LAYOUT
+   ============================================================ */
+#app { display:none;height:100vh;position:relative }
+#app.active { display:flex }
+
+/* Desktop: sidebar + map */
+.sidebar {
+  width:380px;min-width:380px;height:100vh;
+  background:var(--surface);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  z-index:10;
+  transition:transform .3s var(--ease-out);
+}
+
+/* ---- Sidebar Header ---- */
+.sb-header {
+  padding:1.2rem 1.5rem;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.sb-logo { font-family:var(--serif);font-size:1.4rem;font-weight:300 }
+.sb-logo span { color:var(--teal) }
+.sb-trip-name {
+  font-size:.65rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--teal);
+  background:var(--teal-glow);
+  padding:.35rem .8rem;border-radius:100px;
+}
+
+/* ---- Online Users ---- */
+.sb-users {
+  padding:.8rem 1.5rem;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:.5rem;
+  flex-wrap:wrap;
+}
+.sb-users-label {
+  font-size:.6rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--muted);width:100%;margin-bottom:.25rem;
+}
+.user-avatar {
+  width:32px;height:32px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.7rem;font-weight:700;color:var(--ink);
+  position:relative;
+  transition:transform .2s var(--ease);
+}
+.user-avatar:hover { transform:scale(1.15) }
+.user-avatar .pulse {
+  position:absolute;inset:-3px;border-radius:50%;
+  border:2px solid currentColor;opacity:.4;
+  animation:avatar-pulse 2s ease-in-out infinite;
+}
+@keyframes avatar-pulse{0%,100%{transform:scale(1);opacity:.4}50%{transform:scale(1.15);opacity:0}}
+
+/* ---- Tabs ---- */
+.sb-tabs {
+  display:flex;border-bottom:1px solid var(--border);
+}
+.sb-tab {
+  flex:1;padding:.75rem;
+  font-size:.7rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--muted);text-align:center;
+  border-bottom:2px solid transparent;
+  transition:all .2s;
+}
+.sb-tab.active { color:var(--teal);border-bottom-color:var(--teal) }
+.sb-tab:hover { color:var(--ivory) }
+
+/* ---- Tab Content ---- */
+.sb-content { flex:1;overflow-y:auto;overflow-x:hidden }
+.sb-content::-webkit-scrollbar{width:4px}
+.sb-content::-webkit-scrollbar-track{background:transparent}
+.sb-content::-webkit-scrollbar-thumb{background:var(--surface-3);border-radius:2px}
+
+/* ---- Pins List ---- */
+.pins-list { padding:.5rem }
+.pin-card {
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:1rem 1.2rem;
+  margin-bottom:.5rem;
+  transition:border-color .2s;
+  cursor:pointer;
+}
+.pin-card:hover { border-color:var(--teal-dim) }
+.pin-card-header {
+  display:flex;align-items:center;gap:.6rem;margin-bottom:.5rem;
+}
+.pin-icon {
+  width:36px;height:36px;border-radius:var(--radius-sm);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;
+}
+.pin-icon.hotel { background:rgba(96,165,250,.15) }
+.pin-icon.food { background:rgba(255,107,107,.15) }
+.pin-icon.activity { background:rgba(167,139,250,.15) }
+.pin-icon.general { background:var(--teal-glow) }
+.pin-title { font-weight:500;font-size:.95rem }
+.pin-author { font-size:.7rem;color:var(--muted) }
+.pin-note { font-size:.85rem;color:var(--ivory-dim);margin-bottom:.6rem;line-height:1.4 }
+.pin-votes {
+  display:flex;gap:.4rem;flex-wrap:wrap;
+}
+.pin-vote-btn {
+  display:flex;align-items:center;gap:.3rem;
+  padding:.3rem .6rem;
+  background:var(--surface-3);
+  border-radius:100px;font-size:.75rem;
+  transition:all .15s;
+}
+.pin-vote-btn:hover { background:rgba(255,255,255,.1) }
+.pin-vote-btn.voted { background:var(--teal-glow);color:var(--teal) }
+.pin-vote-count { font-weight:600 }
+
+.pins-empty {
+  text-align:center;padding:3rem 1.5rem;
+  color:var(--muted);
+}
+.pins-empty-icon { font-size:2.5rem;margin-bottom:.8rem;opacity:.5 }
+.pins-empty-text { font-size:.85rem;line-height:1.5 }
+
+/* ---- Chat ---- */
+.chat-panel { display:none;flex-direction:column;height:100% }
+.chat-panel.active { display:flex }
+.chat-messages {
+  flex:1;overflow-y:auto;padding:1rem 1.2rem;
+}
+.chat-messages::-webkit-scrollbar{width:4px}
+.chat-messages::-webkit-scrollbar-thumb{background:var(--surface-3);border-radius:2px}
+.chat-msg {
+  margin-bottom:1rem;
+}
+.chat-msg-author {
+  font-size:.7rem;font-weight:600;letter-spacing:.05em;
+  margin-bottom:.2rem;
+}
+.chat-msg-text {
+  font-size:.88rem;color:var(--ivory-dim);line-height:1.45;
+  background:var(--surface-2);
+  padding:.6rem .9rem;border-radius:var(--radius-sm);
+  border-radius:0 var(--radius-sm) var(--radius-sm) var(--radius-sm);
+  display:inline-block;max-width:90%;
+}
+.chat-msg-time { font-size:.6rem;color:var(--muted);margin-top:.2rem }
+.chat-input-wrap {
+  padding:.8rem 1rem;border-top:1px solid var(--border);
+  display:flex;gap:.5rem;
+}
+.chat-input {
+  flex:1;padding:.7rem 1rem;
+  background:var(--surface-2);border:1px solid var(--border-2);
+  border-radius:100px;color:var(--ivory);
+  font-family:var(--sans);font-size:.88rem;outline:none;
+}
+.chat-input:focus { border-color:var(--teal) }
+.chat-send {
+  width:40px;height:40px;border-radius:50%;
+  background:var(--teal);color:var(--ink);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;font-weight:700;
+  transition:background .2s;
+}
+.chat-send:hover { background:var(--teal-light) }
+
+/* ---- Itinerary ---- */
+.itin-panel { display:none;padding:1rem 1.2rem }
+.itin-panel.active { display:block }
+.itin-day {
+  margin-bottom:1.5rem;
+}
+.itin-day-header {
+  font-size:.65rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--teal);margin-bottom:.6rem;
+  display:flex;align-items:center;gap:.5rem;
+}
+.itin-day-line { flex:1;height:1px;background:var(--border-2) }
+.itin-stop {
+  display:flex;gap:.8rem;margin-bottom:.6rem;padding-left:.5rem;
+  border-left:2px solid var(--surface-3);
+}
+.itin-stop-time {
+  font-size:.7rem;font-weight:600;color:var(--ivory-dim);
+  min-width:50px;padding-top:.15rem;
+}
+.itin-stop-info { flex:1 }
+.itin-stop-name { font-weight:500;font-size:.9rem }
+.itin-stop-note { font-size:.78rem;color:var(--muted) }
+
+/* ============================================================
+   MAP AREA
+   ============================================================ */
+.map-area {
+  flex:1;position:relative;height:100vh;
+  background:var(--ink-warm);
+}
+#map {
+  width:100%;height:100%;
+  background:var(--surface);
+}
+
+/* ---- Map Toolbar (floating) ---- */
+.map-toolbar {
+  position:absolute;top:1rem;left:50%;transform:translateX(-50%);
+  display:flex;gap:.4rem;
+  background:var(--surface);
+  border:1px solid var(--border-2);
+  border-radius:100px;
+  padding:.4rem;
+  z-index:20;
+  box-shadow:0 8px 32px rgba(0,0,0,.4);
+}
+.map-tool {
+  width:40px;height:40px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;color:var(--ivory-dim);
+  transition:all .15s;
+  position:relative;
+}
+.map-tool:hover { background:var(--surface-2);color:var(--ivory) }
+.map-tool.active { background:var(--teal-glow);color:var(--teal) }
+.map-tool-tip {
+  position:absolute;bottom:-2rem;left:50%;transform:translateX(-50%);
+  font-size:.6rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ivory-dim);background:var(--surface);
+  padding:.25rem .5rem;border-radius:4px;
+  white-space:nowrap;opacity:0;transition:opacity .15s;
+  pointer-events:none;
+}
+.map-tool:hover .map-tool-tip { opacity:1 }
+
+/* ---- Pin Modal ---- */
+.pin-modal-overlay {
+  position:fixed;inset:0;background:rgba(0,0,0,.6);
+  z-index:500;display:none;align-items:center;justify-content:center;
+  backdrop-filter:blur(4px);
+}
+.pin-modal-overlay.show { display:flex }
+.pin-modal {
+  background:var(--surface);
+  border:1px solid var(--border-2);
+  border-radius:var(--radius-lg);
+  padding:2rem;width:90%;max-width:420px;
+  position:relative;
+}
+.pin-modal h3 {
+  font-size:1.5rem;margin-bottom:1.5rem;
+}
+.pin-modal h3 span { color:var(--teal) }
+.pm-field {
+  width:100%;padding:.8rem 1rem;
+  background:var(--surface-2);border:1px solid var(--border-2);
+  border-radius:var(--radius-sm);color:var(--ivory);
+  font-family:var(--sans);font-size:.9rem;
+  outline:none;margin-bottom:.8rem;
+  transition:border-color .2s;
+}
+.pm-field:focus { border-color:var(--teal) }
+.pm-field::placeholder { color:var(--muted) }
+textarea.pm-field { resize:vertical;min-height:80px }
+.pm-categories {
+  display:flex;gap:.5rem;margin-bottom:1.2rem;flex-wrap:wrap;
+}
+.pm-cat {
+  padding:.5rem 1rem;border-radius:100px;
+  font-size:.78rem;font-weight:500;
+  border:1px solid var(--border-2);
+  transition:all .15s;
+}
+.pm-cat:hover { border-color:var(--ivory-dim) }
+.pm-cat.selected { background:var(--teal-glow);border-color:var(--teal);color:var(--teal) }
+.pm-actions { display:flex;gap:.5rem;margin-top:.5rem }
+.pm-cancel {
+  flex:1;padding:.8rem;border-radius:var(--radius-sm);
+  background:var(--surface-2);font-weight:500;font-size:.85rem;
+  transition:background .2s;
+}
+.pm-cancel:hover { background:var(--surface-3) }
+.pm-save {
+  flex:1;padding:.8rem;border-radius:var(--radius-sm);
+  background:var(--teal);color:var(--ink);font-weight:600;font-size:.85rem;
+  transition:background .2s;
+}
+.pm-save:hover { background:var(--teal-light) }
+
+/* ---- Live Cursors ---- */
+.live-cursor {
+  position:absolute;pointer-events:none;z-index:30;
+  transition:left .1s linear, top .1s linear;
+}
+.live-cursor-dot {
+  width:12px;height:12px;border-radius:50%;
+  border:2px solid white;
+  box-shadow:0 2px 8px rgba(0,0,0,.4);
+}
+.live-cursor-name {
+  position:absolute;left:14px;top:-2px;
+  font-size:.6rem;font-weight:600;letter-spacing:.05em;
+  padding:.15rem .45rem;border-radius:4px;
+  color:white;white-space:nowrap;
+}
+
+/* ---- Map Pin Markers ---- */
+.map-pin {
+  position:absolute;z-index:15;
+  transform:translate(-50%,-100%);
+  cursor:pointer;transition:transform .15s var(--ease);
+}
+.map-pin:hover { transform:translate(-50%,-100%) scale(1.15) }
+.map-pin-dot {
+  width:32px;height:32px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.9rem;color:white;
+  box-shadow:0 4px 12px rgba(0,0,0,.4);
+  border:2px solid white;
+}
+.map-pin-stem {
+  width:2px;height:12px;margin:0 auto;
+  background:white;opacity:.6;
+}
+.map-pin-label {
+  position:absolute;top:100%;left:50%;transform:translateX(-50%);
+  margin-top:4px;font-size:.65rem;font-weight:600;
+  color:var(--ivory);background:var(--surface);
+  padding:.2rem .5rem;border-radius:4px;
+  white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.3);
+}
+
+/* ---- Notification Toast ---- */
+.toast {
+  position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);
+  background:var(--surface-2);border:1px solid var(--border-2);
+  border-radius:var(--radius);padding:.8rem 1.5rem;
+  font-size:.85rem;z-index:9000;
+  box-shadow:0 8px 32px rgba(0,0,0,.5);
+  transition:transform .3s var(--ease-out);
+  display:flex;align-items:center;gap:.6rem;
+}
+.toast.show { transform:translateX(-50%) translateY(0) }
+.toast-icon { font-size:1.2rem }
+
+/* ============================================================
+   MOBILE-FIRST: Bottom sheet pattern
+   ============================================================ */
+.mobile-nav {
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--surface);
+  border-top:1px solid var(--border);
+  z-index:50;
+  padding:.4rem 0;padding-bottom:env(safe-area-inset-bottom,.4rem);
+}
+.mobile-nav-inner {
+  display:flex;justify-content:space-around;
+}
+.mob-tab {
+  display:flex;flex-direction:column;align-items:center;gap:.2rem;
+  padding:.5rem .8rem;font-size:1.1rem;color:var(--muted);
+  transition:color .15s;
+}
+.mob-tab span { font-size:.55rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase }
+.mob-tab.active { color:var(--teal) }
+
+/* old mobile-sheet rules moved above with enhanced version */
+
+/* ---- Share Link Bar ---- */
+.share-bar {
+  position:absolute;bottom:1rem;right:1rem;z-index:20;
+  display:flex;gap:.4rem;
+}
+.share-btn {
+  padding:.6rem 1.2rem;
+  background:var(--surface);
+  border:1px solid var(--border-2);
+  border-radius:100px;
+  font-size:.75rem;font-weight:600;letter-spacing:.1em;
+  color:var(--ivory-dim);
+  display:flex;align-items:center;gap:.4rem;
+  box-shadow:0 4px 16px rgba(0,0,0,.3);
+  transition:all .15s;
+}
+.share-btn:hover { border-color:var(--teal);color:var(--teal) }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+  .sidebar { display:none }
+  .mobile-nav { display:block }
+  .map-toolbar {
+    top:1rem;bottom:auto;
+    transform:translateX(-50%);
+    padding:.3rem;gap:.3rem;
+  }
+  .map-tool { width:36px;height:36px;font-size:1rem }
+  .share-bar { bottom:70px;right:.5rem }
+  .share-btn { padding:.5rem .9rem;font-size:.7rem }
+  #app.active { flex-direction:column }
+  .map-area { height:100vh }
+  .pin-modal { padding:1.5rem;width:94% }
+  /* Taller safe area for bottom nav */
+  .mobile-nav { padding-bottom:env(safe-area-inset-bottom,.5rem) }
+}
+
+/* ---- Simulated Map Tiles ---- */
+.sim-map {
+  width:100%;height:100%;
+  position:relative;
+  background:
+    radial-gradient(ellipse at 30% 40%, rgba(0,212,170,.03) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 60%, rgba(96,165,250,.03) 0%, transparent 60%),
+    var(--ink-warm);
+  overflow:hidden;
+}
+.sim-map-grid {
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px);
+  background-size:60px 60px;
+}
+/* Simulated roads */
+.sim-road {
+  position:absolute;background:rgba(255,255,255,.04);
+}
+.sim-road.h { height:2px;width:100% }
+.sim-road.v { width:2px;height:100% }
+.sim-road.main { background:rgba(255,255,255,.07) }
+/* Simulated water */
+.sim-water {
+  position:absolute;border-radius:40% 60% 50% 50%;
+  background:linear-gradient(135deg,rgba(96,165,250,.06),rgba(0,212,170,.04));
+}
+/* Simulated park */
+.sim-park {
+  position:absolute;border-radius:var(--radius);
+  background:rgba(74,222,128,.04);
+  border:1px solid rgba(74,222,128,.06);
+}
+/* Simulated buildings */
+.sim-block {
+  position:absolute;border-radius:3px;
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.03);
+}
+/* Labels */
+.sim-label {
+  position:absolute;
+  font-size:.55rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;
+  color:rgba(255,255,255,.12);
+}
+
+/* ---- Install Banner (PWA) ---- */
+.install-banner {
+  position:fixed;bottom:0;left:0;right:0;
+  background:linear-gradient(135deg,var(--surface) 0%,var(--surface-2) 100%);
+  border-top:1px solid var(--teal-dim);
+  padding:1rem 1.2rem;
+  display:flex;align-items:center;gap:1rem;
+  z-index:9000;
+  transform:translateY(100%);
+  transition:transform .4s var(--ease-out);
+}
+.install-banner.show { transform:translateY(0) }
+.install-banner-icon {
+  width:48px;height:48px;border-radius:12px;
+  background:var(--teal-glow);border:1px solid var(--teal-dim);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem;flex-shrink:0;
+}
+.install-banner-text { flex:1 }
+.install-banner-title { font-weight:600;font-size:.9rem }
+.install-banner-sub { font-size:.75rem;color:var(--ivory-dim) }
+.install-banner-btn {
+  padding:.6rem 1.2rem;border-radius:100px;
+  background:var(--teal);color:var(--ink);
+  font-weight:700;font-size:.8rem;
+  white-space:nowrap;
+}
+.install-banner-close {
+  font-size:1.2rem;color:var(--muted);padding:.5rem;
+}
+
+/* ---- Mobile Bottom Sheet (draggable) ---- */
+.mobile-sheet {
+  display:none;
+  position:fixed;left:0;right:0;bottom:56px;
+  background:var(--surface);
+  border-top:1px solid var(--border);
+  border-radius:var(--radius-lg) var(--radius-lg) 0 0;
+  z-index:40;
+  transition:transform .3s var(--ease-out), max-height .3s var(--ease-out);
+  overflow:hidden;
+  max-height:0;
+}
+.mobile-sheet.open {
+  display:block;
+  max-height:55vh;
+}
+.mobile-sheet.full {
+  max-height:85vh;
+}
+.sheet-handle-area {
+  padding:8px 0 4px;cursor:grab;touch-action:none;
+}
+.mobile-sheet .sheet-handle {
+  width:36px;height:4px;background:var(--surface-3);
+  border-radius:2px;margin:0 auto;
+}
+.mobile-sheet-inner {
+  overflow-y:auto;max-height:calc(55vh - 20px);
+  padding:0 1rem 1rem;
+  -webkit-overflow-scrolling:touch;
+}
+.mobile-sheet.full .mobile-sheet-inner {
+  max-height:calc(85vh - 20px);
+}
+
+/* ---- Mobile Share Action Sheet ---- */
+.share-sheet {
+  position:fixed;inset:0;z-index:800;
+  background:rgba(0,0,0,.5);backdrop-filter:blur(4px);
+  display:none;align-items:flex-end;justify-content:center;
+}
+.share-sheet.show { display:flex }
+.share-sheet-card {
+  background:var(--surface);
+  border-radius:var(--radius-lg) var(--radius-lg) 0 0;
+  width:100%;max-width:500px;
+  padding:1.5rem;
+  padding-bottom:calc(1.5rem + env(safe-area-inset-bottom, 0px));
+  animation:slideUp .3s var(--ease-out);
+}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.share-sheet-title {
+  font-family:var(--serif);font-size:1.3rem;margin-bottom:.3rem;
+}
+.share-sheet-code {
+  font-size:.75rem;color:var(--teal);font-weight:600;
+  letter-spacing:.1em;margin-bottom:1.2rem;
+}
+.share-sheet-options {
+  display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem;
+  margin-bottom:1.2rem;
+}
+.share-opt {
+  display:flex;flex-direction:column;align-items:center;gap:.4rem;
+  padding:.8rem .4rem;border-radius:var(--radius);
+  transition:background .15s;
+}
+.share-opt:hover { background:var(--surface-2) }
+.share-opt-icon {
+  width:48px;height:48px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;
+}
+.share-opt-label { font-size:.65rem;font-weight:600;color:var(--ivory-dim) }
+.share-opt.copy .share-opt-icon { background:var(--teal-glow);color:var(--teal) }
+.share-opt.text .share-opt-icon { background:rgba(74,222,128,.12);color:#4ADE80 }
+.share-opt.qr .share-opt-icon { background:rgba(167,139,250,.12);color:var(--violet) }
+.share-opt.more .share-opt-icon { background:rgba(255,255,255,.06);color:var(--ivory-dim) }
+.share-sheet-link {
+  width:100%;padding:.8rem 1rem;
+  background:var(--surface-2);border:1px solid var(--border-2);
+  border-radius:var(--radius-sm);
+  font-size:.78rem;color:var(--ivory-dim);font-family:var(--sans);
+  word-break:break-all;text-align:center;
+  margin-bottom:1rem;
+}
+.share-sheet-cancel {
+  width:100%;padding:.9rem;
+  background:var(--surface-2);border-radius:var(--radius-sm);
+  font-weight:600;font-size:.9rem;text-align:center;
+}
+
+/* ---- QR Code Modal ---- */
+.qr-modal {
+  position:fixed;inset:0;z-index:900;
+  background:rgba(0,0,0,.7);backdrop-filter:blur(8px);
+  display:none;align-items:center;justify-content:center;
+}
+.qr-modal.show { display:flex }
+.qr-card {
+  background:white;border-radius:var(--radius-lg);
+  padding:2rem;text-align:center;max-width:300px;width:85%;
+}
+.qr-canvas { width:200px;height:200px;margin:0 auto 1rem;background:#eee;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+}
+.qr-canvas-placeholder {
+  font-size:.7rem;color:#666;padding:1rem;line-height:1.4;
+}
+.qr-trip-name { font-size:.8rem;color:#333;font-weight:600;margin-bottom:1rem }
+.qr-close {
+  padding:.6rem 2rem;background:var(--ink);color:white;
+  border-radius:100px;font-weight:600;font-size:.85rem;
+}
+
+/* ---- Google Maps API hint ---- */
+.api-hint {
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  text-align:center;z-index:5;pointer-events:none;
+}
+.api-hint-badge {
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.5rem 1.2rem;border-radius:100px;
+  background:var(--surface);border:1px solid var(--border-2);
+  font-size:.65rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--ivory-dim);
+  box-shadow:0 4px 16px rgba(0,0,0,.3);
+}
+.api-hint-badge .dot {
+  width:6px;height:6px;border-radius:50%;background:var(--teal);
+  animation:blink 1.5s ease-in-out infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     JOIN SCREEN
+     ============================================================ -->
+<div id="joinScreen">
+  <div class="join-card">
+    <div class="join-logo">Travl<span>Team</span></div>
+    <div class="join-sub">Plan Together, Go Together</div>
+    <input class="join-field" id="joinName" placeholder="Your name" maxlength="24" autofocus>
+    <input class="join-field" id="joinTrip" placeholder="Trip code (e.g. asheville-2026)" maxlength="40">
+    <button class="join-btn" id="joinBtn">Join Trip</button>
+    <div class="join-or">or</div>
+    <button class="join-create" id="createBtn">Create a new trip</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     MAIN APP
+     ============================================================ -->
+<div id="app">
+  <!-- SIDEBAR (Desktop) -->
+  <div class="sidebar" id="sidebar">
+    <div class="sb-header">
+      <div class="sb-logo">Travl<span>Team</span></div>
+      <div class="sb-trip-name" id="tripLabel">—</div>
+    </div>
+
+    <div class="sb-users" id="usersBar">
+      <div class="sb-users-label">Online Now</div>
+    </div>
+
+    <div class="sb-tabs">
+      <button class="sb-tab active" data-tab="pins">Places</button>
+      <button class="sb-tab" data-tab="chat">Chat</button>
+      <button class="sb-tab" data-tab="itinerary">Itinerary</button>
+    </div>
+
+    <div class="sb-content">
+      <!-- Pins tab -->
+      <div class="tab-pane active" id="pinsPane">
+        <div class="pins-list" id="pinsList">
+          <div class="pins-empty">
+            <div class="pins-empty-icon">&#128205;</div>
+            <div class="pins-empty-text">Click the map to drop a pin<br>and suggest a place to visit</div>
+          </div>
+        </div>
+      </div>
+      <!-- Chat tab -->
+      <div class="tab-pane chat-panel" id="chatPane">
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input-wrap">
+          <input class="chat-input" id="chatInput" placeholder="Type a message...">
+          <button class="chat-send" id="chatSend">&#8593;</button>
+        </div>
+      </div>
+      <!-- Itinerary tab -->
+      <div class="tab-pane itin-panel" id="itinPane">
+        <div class="itin-day">
+          <div class="itin-day-header">Day 1 &mdash; Arrival <div class="itin-day-line"></div></div>
+          <div class="itin-stop">
+            <div class="itin-stop-time">2:00p</div>
+            <div class="itin-stop-info">
+              <div class="itin-stop-name">Check in at Airbnb</div>
+              <div class="itin-stop-note">Downtown location</div>
+            </div>
+          </div>
+          <div class="itin-stop">
+            <div class="itin-stop-time">5:30p</div>
+            <div class="itin-stop-info">
+              <div class="itin-stop-name">Sunset rooftop drinks</div>
+              <div class="itin-stop-note">Voted by team</div>
+            </div>
+          </div>
+          <div class="itin-stop">
+            <div class="itin-stop-time">7:30p</div>
+            <div class="itin-stop-info">
+              <div class="itin-stop-name">Group dinner</div>
+              <div class="itin-stop-note">3 options pinned</div>
+            </div>
+          </div>
+        </div>
+        <div class="itin-day">
+          <div class="itin-day-header">Day 2 &mdash; Explore <div class="itin-day-line"></div></div>
+          <div class="itin-stop">
+            <div class="itin-stop-time">9:00a</div>
+            <div class="itin-stop-info">
+              <div class="itin-stop-name">Breakfast spot</div>
+              <div class="itin-stop-note">Highest voted pin</div>
+            </div>
+          </div>
+          <div class="itin-stop">
+            <div class="itin-stop-time">11:00a</div>
+            <div class="itin-stop-info">
+              <div class="itin-stop-name">Activity TBD</div>
+              <div class="itin-stop-note">Vote on activities tab</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAP -->
+  <div class="map-area">
+    <div id="map">
+      <!-- Simulated map (replace with Google Maps API) -->
+      <div class="sim-map" id="simMap">
+        <div class="sim-map-grid"></div>
+        <!-- Roads -->
+        <div class="sim-road h main" style="top:35%"></div>
+        <div class="sim-road h" style="top:22%"></div>
+        <div class="sim-road h" style="top:50%"></div>
+        <div class="sim-road h" style="top:65%"></div>
+        <div class="sim-road h" style="top:80%"></div>
+        <div class="sim-road v main" style="left:40%"></div>
+        <div class="sim-road v" style="left:20%"></div>
+        <div class="sim-road v" style="left:55%"></div>
+        <div class="sim-road v" style="left:75%"></div>
+        <!-- Water -->
+        <div class="sim-water" style="right:-5%;top:10%;width:30%;height:25%"></div>
+        <!-- Parks -->
+        <div class="sim-park" style="left:15%;top:55%;width:12%;height:10%"></div>
+        <div class="sim-park" style="left:60%;top:70%;width:8%;height:7%"></div>
+        <!-- Blocks -->
+        <div class="sim-block" style="left:25%;top:25%;width:8%;height:6%"></div>
+        <div class="sim-block" style="left:45%;top:18%;width:6%;height:5%"></div>
+        <div class="sim-block" style="left:50%;top:40%;width:10%;height:7%"></div>
+        <div class="sim-block" style="left:30%;top:60%;width:7%;height:5%"></div>
+        <div class="sim-block" style="left:65%;top:50%;width:9%;height:6%"></div>
+        <div class="sim-block" style="left:12%;top:38%;width:6%;height:4%"></div>
+        <div class="sim-block" style="left:70%;top:30%;width:5%;height:4%"></div>
+        <!-- Labels -->
+        <div class="sim-label" style="left:16%;top:57%">Riverside Park</div>
+        <div class="sim-label" style="left:61%;top:72%">Gardens</div>
+        <div class="sim-label" style="right:8%;top:18%">Harbor</div>
+        <div class="sim-label" style="left:42%;top:33%">Downtown</div>
+        <div class="sim-label" style="left:22%;top:23%">Arts District</div>
+        <!-- API hint -->
+        <div class="api-hint">
+          <div class="api-hint-badge">
+            <span class="dot"></span>
+            Prototype Mode &mdash; Add Google Maps API key for real tiles
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Map Toolbar -->
+    <div class="map-toolbar">
+      <button class="map-tool active" id="toolPin" title="Drop Pin">
+        &#128205;
+        <span class="map-tool-tip">Drop Pin</span>
+      </button>
+      <button class="map-tool" id="toolRoute" title="Draw Route">
+        &#128739;
+        <span class="map-tool-tip">Route</span>
+      </button>
+      <button class="map-tool" id="toolMeasure" title="Measure">
+        &#128207;
+        <span class="map-tool-tip">Measure</span>
+      </button>
+      <button class="map-tool" id="tool3d" title="3D View">
+        &#127758;
+        <span class="map-tool-tip">3D View</span>
+      </button>
+    </div>
+
+    <!-- Share bar -->
+    <div class="share-bar">
+      <button class="share-btn" id="shareBtn">
+        &#128279; Copy Trip Link
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Pin Modal -->
+<div class="pin-modal-overlay" id="pinModal">
+  <div class="pin-modal">
+    <h3>Add a <span>Place</span></h3>
+    <input class="pm-field" id="pmName" placeholder="Place name" maxlength="80">
+    <div class="pm-categories">
+      <button class="pm-cat selected" data-cat="general">General</button>
+      <button class="pm-cat" data-cat="hotel">Hotel</button>
+      <button class="pm-cat" data-cat="food">Food</button>
+      <button class="pm-cat" data-cat="activity">Activity</button>
+    </div>
+    <textarea class="pm-field" id="pmNote" placeholder="Notes — why should we go here?"></textarea>
+    <div class="pm-actions">
+      <button class="pm-cancel" id="pmCancel">Cancel</button>
+      <button class="pm-save" id="pmSave">Add to Map</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <span class="toast-icon"></span>
+  <span class="toast-text"></span>
+</div>
+
+<!-- Mobile Nav -->
+<div class="mobile-nav">
+  <div class="mobile-nav-inner">
+    <button class="mob-tab active" data-mob="map">&#128506;<span>Map</span></button>
+    <button class="mob-tab" data-mob="pins">&#128205;<span>Places</span></button>
+    <button class="mob-tab" data-mob="chat">&#128172;<span>Chat</span></button>
+    <button class="mob-tab" data-mob="itinerary">&#128197;<span>Plan</span></button>
+    <button class="mob-tab" data-mob="team">&#128101;<span>Team</span></button>
+  </div>
+</div>
+
+<!-- Mobile Sheet (draggable) -->
+<div class="mobile-sheet" id="mobileSheet">
+  <div class="sheet-handle-area" id="sheetHandle">
+    <div class="sheet-handle"></div>
+  </div>
+  <div class="mobile-sheet-inner" id="mobileSheetContent"></div>
+</div>
+
+<!-- Share Action Sheet (mobile-native feel) -->
+<div class="share-sheet" id="shareSheet">
+  <div class="share-sheet-card">
+    <div class="share-sheet-title">Share this trip</div>
+    <div class="share-sheet-code" id="shareSheetCode">—</div>
+    <div class="share-sheet-options">
+      <button class="share-opt copy" id="shareCopy">
+        <div class="share-opt-icon">&#128279;</div>
+        <div class="share-opt-label">Copy Link</div>
+      </button>
+      <button class="share-opt text" id="shareNative">
+        <div class="share-opt-icon">&#128228;</div>
+        <div class="share-opt-label">Share</div>
+      </button>
+      <button class="share-opt qr" id="shareQR">
+        <div class="share-opt-icon">&#9641;</div>
+        <div class="share-opt-label">QR Code</div>
+      </button>
+      <button class="share-opt more" id="shareMore">
+        <div class="share-opt-icon">&#8943;</div>
+        <div class="share-opt-label">More</div>
+      </button>
+    </div>
+    <div class="share-sheet-link" id="shareSheetLink">—</div>
+    <button class="share-sheet-cancel" id="shareSheetCancel">Cancel</button>
+  </div>
+</div>
+
+<!-- QR Code Modal -->
+<div class="qr-modal" id="qrModal">
+  <div class="qr-card">
+    <div class="qr-canvas" id="qrCanvas">
+      <div class="qr-canvas-placeholder">Point your friend's camera here to join the trip</div>
+    </div>
+    <div class="qr-trip-name" id="qrTripName">—</div>
+    <button class="qr-close" id="qrClose">Done</button>
+  </div>
+</div>
+
+<!-- Install to Home Screen Banner -->
+<div class="install-banner" id="installBanner">
+  <div class="install-banner-icon">&#127758;</div>
+  <div class="install-banner-text">
+    <div class="install-banner-title">Add TravlTeam</div>
+    <div class="install-banner-sub">Install for the full app experience</div>
+  </div>
+  <button class="install-banner-btn" id="installBtn">Install</button>
+  <button class="install-banner-close" id="installClose">&#10005;</button>
+</div>
+
+<!-- ============================================================
+     SCRIPTS
+     ============================================================ -->
+<script src="/socket.io/socket.io.js"></script>
+<script>
+(function(){
+  // --- State ---
+  let socket;
+  let myName = '';
+  let myColor = '';
+  let tripId = '';
+  let activeTool = 'pin';
+  let pendingPinPos = null;
+  const pins = [];
+  const userColors = ['#00D4AA','#FF6B6B','#FFB347','#A78BFA','#60A5FA','#4ADE80','#F472B6','#FBBF24'];
+
+  // --- Elements ---
+  const joinScreen = document.getElementById('joinScreen');
+  const app = document.getElementById('app');
+  const joinName = document.getElementById('joinName');
+  const joinTrip = document.getElementById('joinTrip');
+  const joinBtn = document.getElementById('joinBtn');
+  const createBtn = document.getElementById('createBtn');
+  const tripLabel = document.getElementById('tripLabel');
+  const usersBar = document.getElementById('usersBar');
+  const pinsList = document.getElementById('pinsList');
+  const chatMessages = document.getElementById('chatMessages');
+  const chatInput = document.getElementById('chatInput');
+  const chatSend = document.getElementById('chatSend');
+  const pinModal = document.getElementById('pinModal');
+  const simMap = document.getElementById('simMap');
+  const toast = document.getElementById('toast');
+  const shareBtn = document.getElementById('shareBtn');
+  const mobileSheet = document.getElementById('mobileSheet');
+  const mobileSheetContent = document.getElementById('mobileSheetContent');
+
+  // --- Join ---
+  function generateTripId() {
+    const words = ['adventure','journey','voyage','trek','escape','wander','roam','drift'];
+    return words[Math.floor(Math.random()*words.length)] + '-' + Math.random().toString(36).slice(2,6);
+  }
+
+  function joinTripper() {
+    myName = joinName.value.trim() || 'Traveler';
+    tripId = joinTrip.value.trim().toLowerCase().replace(/\s+/g,'-') || generateTripId();
+    myColor = userColors[Math.floor(Math.random()*userColors.length)];
+
+    joinScreen.classList.add('hidden');
+    app.classList.add('active');
+    tripLabel.textContent = tripId;
+
+    // Connect socket
+    socket = io();
+    socket.emit('join-trip', { tripId, name: myName, color: myColor });
+
+    socket.on('trip-state', (state) => {
+      state.pins.forEach(p => addPinToUI(p));
+      renderUsers(state.users);
+    });
+
+    socket.on('user-joined', (user) => {
+      showToast('&#128075;', user.name + ' joined the trip');
+    });
+
+    socket.on('users-update', renderUsers);
+
+    socket.on('pin-added', (pin) => {
+      addPinToUI(pin);
+    });
+
+    socket.on('pin-updated', (pin) => {
+      updatePinInUI(pin);
+    });
+
+    socket.on('pin-deleted', ({ pinId }) => {
+      removePinFromUI(pinId);
+    });
+
+    socket.on('cursor-update', (data) => {
+      renderCursor(data);
+    });
+
+    socket.on('cursor-remove', ({ id }) => {
+      const el = document.getElementById('cursor-' + id);
+      if (el) el.remove();
+    });
+
+    socket.on('chat-message', (msg) => {
+      addChatMessage(msg);
+    });
+  }
+
+  joinBtn.addEventListener('click', joinTripper);
+  joinName.addEventListener('keydown', (e) => { if (e.key === 'Enter') joinTripper() });
+  joinTrip.addEventListener('keydown', (e) => { if (e.key === 'Enter') joinTripper() });
+  createBtn.addEventListener('click', () => {
+    joinTrip.value = generateTripId();
+    joinTripper();
+  });
+
+  // --- Users ---
+  function renderUsers(users) {
+    const label = usersBar.querySelector('.sb-users-label');
+    usersBar.innerHTML = '';
+    usersBar.appendChild(label);
+    label.textContent = 'Online Now (' + users.length + ')';
+    users.forEach(u => {
+      const av = document.createElement('div');
+      av.className = 'user-avatar';
+      av.style.background = u.color;
+      av.textContent = u.name.charAt(0).toUpperCase();
+      av.title = u.name;
+      const pulse = document.createElement('div');
+      pulse.className = 'pulse';
+      pulse.style.borderColor = u.color;
+      av.appendChild(pulse);
+      usersBar.appendChild(av);
+    });
+  }
+
+  // --- Tabs ---
+  document.querySelectorAll('.sb-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.sb-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      document.querySelectorAll('.tab-pane').forEach(p => {
+        p.classList.remove('active');
+        p.style.display = 'none';
+      });
+      const target = document.getElementById(tab.dataset.tab + 'Pane');
+      target.classList.add('active');
+      target.style.display = tab.dataset.tab === 'chat' ? 'flex' : 'block';
+    });
+  });
+
+  // Init tab visibility
+  document.getElementById('chatPane').style.display = 'none';
+  document.getElementById('itinPane').style.display = 'none';
+
+  // --- Map Toolbar ---
+  document.querySelectorAll('.map-tool').forEach(tool => {
+    tool.addEventListener('click', () => {
+      document.querySelectorAll('.map-tool').forEach(t => t.classList.remove('active'));
+      tool.classList.add('active');
+      activeTool = tool.id.replace('tool','').toLowerCase();
+    });
+  });
+
+  // --- Map Click -> Drop Pin ---
+  simMap.addEventListener('click', (e) => {
+    if (activeTool !== 'pin') return;
+    const rect = simMap.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width * 100);
+    const y = ((e.clientY - rect.top) / rect.height * 100);
+    pendingPinPos = { x, y };
+    pinModal.classList.add('show');
+    document.getElementById('pmName').focus();
+  });
+
+  // --- Pin Modal ---
+  let selectedCat = 'general';
+  document.querySelectorAll('.pm-cat').forEach(cat => {
+    cat.addEventListener('click', () => {
+      document.querySelectorAll('.pm-cat').forEach(c => c.classList.remove('selected'));
+      cat.classList.add('selected');
+      selectedCat = cat.dataset.cat;
+    });
+  });
+
+  document.getElementById('pmCancel').addEventListener('click', () => {
+    pinModal.classList.remove('show');
+    resetPinModal();
+  });
+
+  document.getElementById('pmSave').addEventListener('click', () => {
+    const name = document.getElementById('pmName').value.trim();
+    if (!name) return;
+    const note = document.getElementById('pmNote').value.trim();
+
+    socket.emit('add-pin', {
+      name,
+      category: selectedCat,
+      note,
+      pos: pendingPinPos,
+      color: myColor,
+    });
+
+    pinModal.classList.remove('show');
+    resetPinModal();
+    showToast('&#128205;', 'Pin added: ' + name);
+  });
+
+  function resetPinModal() {
+    document.getElementById('pmName').value = '';
+    document.getElementById('pmNote').value = '';
+    selectedCat = 'general';
+    document.querySelectorAll('.pm-cat').forEach(c => c.classList.remove('selected'));
+    document.querySelector('.pm-cat[data-cat="general"]').classList.add('selected');
+  }
+
+  // --- Render Pins ---
+  const catIcons = { general:'&#128204;', hotel:'&#127976;', food:'&#127869;', activity:'&#127946;' };
+  const catColors = { general:'var(--teal)', hotel:'var(--sky)', food:'var(--coral)', activity:'var(--violet)' };
+
+  function addPinToUI(pin) {
+    pins.push(pin);
+
+    // Map marker
+    const marker = document.createElement('div');
+    marker.className = 'map-pin';
+    marker.id = 'marker-' + pin.id;
+    marker.style.left = pin.pos.x + '%';
+    marker.style.top = pin.pos.y + '%';
+    marker.innerHTML = `
+      <div class="map-pin-dot" style="background:${catColors[pin.category] || catColors.general}">
+        ${catIcons[pin.category] || catIcons.general}
+      </div>
+      <div class="map-pin-stem"></div>
+      <div class="map-pin-label">${escapeHtml(pin.name)}</div>
+    `;
+    marker.addEventListener('click', (e) => {
+      e.stopPropagation();
+      // Could open detail panel
+    });
+    simMap.appendChild(marker);
+
+    // Sidebar card
+    renderPinsList();
+  }
+
+  function updatePinInUI(updatedPin) {
+    const idx = pins.findIndex(p => p.id === updatedPin.id);
+    if (idx > -1) pins[idx] = updatedPin;
+    renderPinsList();
+  }
+
+  function removePinFromUI(pinId) {
+    const idx = pins.findIndex(p => p.id === pinId);
+    if (idx > -1) pins.splice(idx, 1);
+    const marker = document.getElementById('marker-' + pinId);
+    if (marker) marker.remove();
+    renderPinsList();
+  }
+
+  function renderPinsList() {
+    if (pins.length === 0) {
+      pinsList.innerHTML = `
+        <div class="pins-empty">
+          <div class="pins-empty-icon">&#128205;</div>
+          <div class="pins-empty-text">Click the map to drop a pin<br>and suggest a place to visit</div>
+        </div>`;
+      return;
+    }
+    pinsList.innerHTML = pins.map(pin => {
+      const votes = pin.votes || {};
+      const voteHtml = ['&#128077;','&#10084;','&#128293;','&#129300;'].map(emoji => {
+        const voters = votes[emoji] || [];
+        const voted = voters.includes(myName);
+        return `<button class="pin-vote-btn${voted?' voted':''}" onclick="votePin('${pin.id}','${emoji}')">
+          ${emoji} <span class="pin-vote-count">${voters.length || ''}</span>
+        </button>`;
+      }).join('');
+
+      return `<div class="pin-card" onclick="panToPin('${pin.id}')">
+        <div class="pin-card-header">
+          <div class="pin-icon ${pin.category}">${catIcons[pin.category] || catIcons.general}</div>
+          <div>
+            <div class="pin-title">${escapeHtml(pin.name)}</div>
+            <div class="pin-author">by ${escapeHtml(pin.author || 'unknown')}</div>
+          </div>
+        </div>
+        ${pin.note ? `<div class="pin-note">${escapeHtml(pin.note)}</div>` : ''}
+        <div class="pin-votes">${voteHtml}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // Expose for inline onclick
+  window.votePin = function(pinId, emoji) {
+    socket.emit('vote-pin', { pinId, emoji });
+  };
+  window.panToPin = function(pinId) {
+    const marker = document.getElementById('marker-' + pinId);
+    if (marker) {
+      marker.style.transform = 'translate(-50%,-100%) scale(1.3)';
+      setTimeout(() => marker.style.transform = 'translate(-50%,-100%) scale(1)', 400);
+    }
+  };
+
+  // --- Chat ---
+  function addChatMessage(msg) {
+    const div = document.createElement('div');
+    div.className = 'chat-msg';
+    const time = new Date(msg.time);
+    div.innerHTML = `
+      <div class="chat-msg-author" style="color:${msg.author === myName ? 'var(--teal)' : 'var(--amber)'}">${escapeHtml(msg.author)}</div>
+      <div class="chat-msg-text">${escapeHtml(msg.text)}</div>
+      <div class="chat-msg-time">${time.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</div>
+    `;
+    chatMessages.appendChild(div);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  chatSend.addEventListener('click', sendChat);
+  chatInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendChat() });
+
+  function sendChat() {
+    const text = chatInput.value.trim();
+    if (!text) return;
+    socket.emit('chat-message', { text });
+    chatInput.value = '';
+  }
+
+  // --- Live Cursors ---
+  simMap.addEventListener('mousemove', (e) => {
+    if (!socket) return;
+    const rect = simMap.getBoundingClientRect();
+    socket.emit('cursor-move', {
+      x: ((e.clientX - rect.left) / rect.width * 100),
+      y: ((e.clientY - rect.top) / rect.height * 100),
+    });
+  });
+
+  function renderCursor(data) {
+    let el = document.getElementById('cursor-' + data.id);
+    if (!el) {
+      el = document.createElement('div');
+      el.className = 'live-cursor';
+      el.id = 'cursor-' + data.id;
+      el.innerHTML = `
+        <div class="live-cursor-dot" style="background:${data.color || '#FF6B6B'}"></div>
+        <div class="live-cursor-name" style="background:${data.color || '#FF6B6B'}">${escapeHtml(data.name || '?')}</div>
+      `;
+      simMap.appendChild(el);
+    }
+    el.style.left = data.x + '%';
+    el.style.top = data.y + '%';
+  }
+
+  // --- Share (mobile-native + desktop) ---
+  const shareSheet = document.getElementById('shareSheet');
+  const shareSheetCode = document.getElementById('shareSheetCode');
+  const shareSheetLink = document.getElementById('shareSheetLink');
+  const qrModal = document.getElementById('qrModal');
+
+  function getTripUrl() {
+    return location.origin + '/travel?trip=' + encodeURIComponent(tripId);
+  }
+
+  shareBtn.addEventListener('click', () => {
+    const url = getTripUrl();
+    // On mobile, show the share action sheet
+    if (window.innerWidth <= 768) {
+      shareSheetCode.textContent = tripId;
+      shareSheetLink.textContent = url;
+      shareSheet.classList.add('show');
+    } else {
+      // Desktop: just copy
+      navigator.clipboard.writeText(url).then(() => {
+        showToast('&#128279;', 'Trip link copied!');
+      });
+    }
+  });
+
+  // Share sheet actions
+  document.getElementById('shareCopy').addEventListener('click', () => {
+    navigator.clipboard.writeText(getTripUrl()).then(() => {
+      showToast('&#128279;', 'Link copied!');
+      shareSheet.classList.remove('show');
+    });
+  });
+
+  document.getElementById('shareNative').addEventListener('click', () => {
+    if (navigator.share) {
+      navigator.share({
+        title: 'Join my trip on TravlTeam',
+        text: 'Plan our trip together! Tap to join: ' + tripId,
+        url: getTripUrl(),
+      }).then(() => {
+        shareSheet.classList.remove('show');
+      }).catch(() => {});
+    } else {
+      // Fallback: copy
+      navigator.clipboard.writeText(getTripUrl());
+      showToast('&#128228;', 'Link copied (share not supported on this browser)');
+      shareSheet.classList.remove('show');
+    }
+  });
+
+  document.getElementById('shareQR').addEventListener('click', () => {
+    shareSheet.classList.remove('show');
+    document.getElementById('qrTripName').textContent = tripId;
+    // Generate a simple QR-like visual (real QR would use a library)
+    const canvas = document.getElementById('qrCanvas');
+    canvas.innerHTML = generateSimpleQR(getTripUrl());
+    qrModal.classList.add('show');
+  });
+
+  document.getElementById('shareMore').addEventListener('click', () => {
+    // Trigger native share if available, otherwise copy
+    if (navigator.share) {
+      document.getElementById('shareNative').click();
+    } else {
+      document.getElementById('shareCopy').click();
+    }
+  });
+
+  document.getElementById('shareSheetCancel').addEventListener('click', () => {
+    shareSheet.classList.remove('show');
+  });
+
+  document.getElementById('qrClose').addEventListener('click', () => {
+    qrModal.classList.remove('show');
+  });
+
+  // Close share sheet on backdrop tap
+  shareSheet.addEventListener('click', (e) => {
+    if (e.target === shareSheet) shareSheet.classList.remove('show');
+  });
+
+  // Simple QR placeholder (grid pattern that looks like QR)
+  function generateSimpleQR(url) {
+    const size = 9;
+    let html = '<div style="display:inline-grid;grid-template-columns:repeat('+size+',18px);gap:2px;padding:12px">';
+    // Seed from URL for consistent pattern
+    let seed = 0;
+    for (let i = 0; i < url.length; i++) seed = ((seed << 5) - seed) + url.charCodeAt(i);
+    for (let r = 0; r < size; r++) {
+      for (let c = 0; c < size; c++) {
+        // Corner squares (QR finder patterns)
+        const isCorner = (r < 3 && c < 3) || (r < 3 && c >= size-3) || (r >= size-3 && c < 3);
+        const isBorder = isCorner && (r === 0 || r === 2 || c === 0 || c === 2 || r === size-1 || r === size-3 || c === size-1 || c === size-3);
+        const isCenter = (r === 1 && c === 1) || (r === 1 && c === size-2) || (r === size-2 && c === 1);
+        let fill = false;
+        if (isCorner) fill = isBorder || isCenter;
+        else fill = ((seed >> ((r * size + c) % 30)) & 1) === 1;
+        html += '<div style="width:18px;height:18px;border-radius:3px;background:'+(fill?'#111':'#e0e0e0')+'"></div>';
+      }
+    }
+    html += '</div>';
+    return html;
+  }
+
+  // --- Mobile Nav ---
+  document.querySelectorAll('.mob-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.mob-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const target = tab.dataset.mob;
+
+      if (target === 'map') {
+        mobileSheet.classList.remove('open','full');
+        return;
+      }
+
+      mobileSheet.classList.add('open');
+      mobileSheet.classList.remove('full');
+      mobileSheetContent.innerHTML = '';
+
+      if (target === 'pins') {
+        mobileSheetContent.innerHTML = pinsList.innerHTML;
+      } else if (target === 'chat') {
+        // Build a working chat inside the sheet
+        const wrap = document.createElement('div');
+        wrap.style.cssText = 'display:flex;flex-direction:column;height:45vh';
+        const msgs = document.createElement('div');
+        msgs.style.cssText = 'flex:1;overflow-y:auto;padding:.5rem';
+        msgs.id = 'mobileChatMsgs';
+        // Copy existing messages
+        chatMessages.querySelectorAll('.chat-msg').forEach(m => msgs.appendChild(m.cloneNode(true)));
+        const inputWrap = document.createElement('div');
+        inputWrap.className = 'chat-input-wrap';
+        inputWrap.innerHTML = '<input class="chat-input" id="mobileChatInput" placeholder="Type a message..."><button class="chat-send" id="mobileChatSend">&#8593;</button>';
+        wrap.appendChild(msgs);
+        wrap.appendChild(inputWrap);
+        mobileSheetContent.appendChild(wrap);
+        mobileSheet.classList.add('full');
+        // Wire up mobile chat
+        setTimeout(() => {
+          const mInput = document.getElementById('mobileChatInput');
+          const mSend = document.getElementById('mobileChatSend');
+          const mMsgs = document.getElementById('mobileChatMsgs');
+          function mobileSend() {
+            const text = mInput.value.trim();
+            if (!text) return;
+            socket.emit('chat-message', { text });
+            mInput.value = '';
+          }
+          mSend.addEventListener('click', mobileSend);
+          mInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') mobileSend() });
+          // Listen for new messages in mobile view
+          socket.on('chat-message', (msg) => {
+            const div = document.createElement('div');
+            div.className = 'chat-msg';
+            const time = new Date(msg.time);
+            div.innerHTML = '<div class="chat-msg-author" style="color:'+(msg.author===myName?'var(--teal)':'var(--amber)')+'">'+escapeHtml(msg.author)+'</div><div class="chat-msg-text">'+escapeHtml(msg.text)+'</div><div class="chat-msg-time">'+time.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+'</div>';
+            mMsgs.appendChild(div);
+            mMsgs.scrollTop = mMsgs.scrollHeight;
+          });
+        }, 50);
+      } else if (target === 'itinerary') {
+        mobileSheetContent.innerHTML = document.getElementById('itinPane').innerHTML;
+      } else if (target === 'team') {
+        const teamHtml = '<div style="padding:.5rem"><div class="sb-users-label" style="margin-bottom:.8rem">Your Travel Crew</div>' +
+          Array.from(usersBar.querySelectorAll('.user-avatar')).map(a =>
+            '<div style="display:flex;align-items:center;gap:.8rem;padding:.6rem;background:var(--surface-2);border-radius:var(--radius-sm);margin-bottom:.4rem">' +
+            '<div class="user-avatar" style="background:'+a.style.background+'">'+a.textContent.charAt(0)+'</div>' +
+            '<div style="font-weight:500">'+a.title+'</div>' +
+            '<div style="margin-left:auto;font-size:.6rem;color:var(--teal);font-weight:600;letter-spacing:.1em">ONLINE</div></div>'
+          ).join('') + '</div>';
+        mobileSheetContent.innerHTML = teamHtml;
+      }
+    });
+  });
+
+  // --- Draggable Sheet Handle ---
+  const sheetHandle = document.getElementById('sheetHandle');
+  let sheetDragging = false;
+  let sheetStartY = 0;
+  sheetHandle.addEventListener('touchstart', (e) => {
+    sheetDragging = true;
+    sheetStartY = e.touches[0].clientY;
+  }, { passive: true });
+  document.addEventListener('touchmove', (e) => {
+    if (!sheetDragging) return;
+    const dy = e.touches[0].clientY - sheetStartY;
+    if (dy > 60) {
+      // Swipe down — collapse
+      mobileSheet.classList.remove('open','full');
+      document.querySelectorAll('.mob-tab').forEach(t => t.classList.remove('active'));
+      document.querySelector('.mob-tab[data-mob="map"]').classList.add('active');
+      sheetDragging = false;
+    } else if (dy < -60) {
+      // Swipe up — expand full
+      mobileSheet.classList.add('full');
+      sheetDragging = false;
+    }
+  }, { passive: true });
+  document.addEventListener('touchend', () => { sheetDragging = false }, { passive: true });
+
+  // --- PWA Install ---
+  let deferredPrompt = null;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    // Show install banner after 3 seconds
+    setTimeout(() => {
+      document.getElementById('installBanner').classList.add('show');
+    }, 3000);
+  });
+
+  document.getElementById('installBtn').addEventListener('click', () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(() => {
+        deferredPrompt = null;
+        document.getElementById('installBanner').classList.remove('show');
+      });
+    }
+  });
+
+  document.getElementById('installClose').addEventListener('click', () => {
+    document.getElementById('installBanner').classList.remove('show');
+  });
+
+  // Register Service Worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  }
+
+  // Auto-join from URL params
+  const params = new URLSearchParams(location.search);
+  if (params.get('trip')) {
+    joinTrip.value = params.get('trip');
+  }
+
+  // --- Toast ---
+  function showToast(icon, text) {
+    toast.querySelector('.toast-icon').innerHTML = icon;
+    toast.querySelector('.toast-text').textContent = text;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+  }
+
+  // --- Util ---
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+})();
+</script>
+</body>
+</html>
